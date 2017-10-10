@@ -2,6 +2,10 @@ from ClassProcesso import *
 
 class ClassDespachante:
 
+	def __init__ (self, arquivoProcesses, arquivoFiles):
+		self.arquivoProcesses = arquivoProcesses
+		self.arquivoFiles = arquivoFiles
+
 #
 # Funcao lendoArquivoProcesses()
 # Descricao: Realiza a leitura do arquivo txt chamado processes
@@ -16,16 +20,22 @@ class ClassDespachante:
 
 		linhasArquivo = []
 
-		with open ("processes.txt") as arquivo:
+		try:
 
-			for line in arquivo:
-				line = line.rstrip("\n")	# Remocao do "\n" no final de linha
-				if line:
-					linhasArquivo.append(line)
+			with open (self.arquivoProcesses) as arquivo:
 
-		arquivo.close()
+				for line in arquivo:
+					line = line.rstrip("\n")	# Remocao do "\n" no final de linha
+					if line:
+						linhasArquivo.append(line)
 
-		return(linhasArquivo)
+			arquivo.close()
+
+			return(linhasArquivo)
+
+		except FileNotFoundError:
+			print("Arquivo contendo os processos não encontrado, encerrando")
+			exit()
 
 
 	def montaProcesses (self, linhasArquivoProcesses):
