@@ -1,10 +1,12 @@
 from ClassProcesso import *
+from ClassGerenciadorMemoria import *
 
 class ClassDespachante:
 
 	def __init__ (self, arquivoProcesses, arquivoFiles):
 		self.arquivoProcesses = arquivoProcesses
 		self.arquivoFiles = arquivoFiles
+		self.gerenteMemoria = ClassGerenciadorMemoria()
 
 #
 # Funcao lendoArquivoProcesses()
@@ -38,7 +40,7 @@ class ClassDespachante:
 			exit()
 
 
-	def montaProcesses (self, linhasArquivoProcesses):
+	def runProcesses (self, linhasArquivoProcesses):
 
 		vetor_auxiliar = []
 
@@ -51,10 +53,16 @@ class ClassDespachante:
 								int(atri_Processo[5]), int(atri_Processo[6]),
 								int(atri_Processo[7]), len(vetor_auxiliar))
 
+			self.executeProcess(processo_temporario)
+
 
 			vetor_auxiliar.append(processo_temporario)
 
 		return vetor_auxiliar
+
+	def executeProcess(self, processo):
+		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
+			print("dispatcher => ")
 
 
 	def imprimeProcessos(self, vetorProcessos):
@@ -71,6 +79,6 @@ class ClassDespachante:
 		#Leitura das linhas do arquivo .txt de entrada com os processos
 		linhasArquivo = self.lendoArquivoProcesses()
 
-		vetor_processos = self.montaProcesses(linhasArquivo)
+		vetor_processos = self.runProcesses(linhasArquivo)
 
 		self.imprimeProcessos(vetor_processos)
