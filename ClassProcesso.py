@@ -4,8 +4,9 @@ class ClassProcesso:
 	def __init__(self, int_TempIniciacao, int_prioridade,
 					int_tempDeProcessador, int_blocosDeMem,
 					int_numReqImpressora,int_numReqScanner,
-					int_numReqModem, int_numReqDisco):
+					int_numReqModem, int_numReqDisco, int_sizeLista):
 
+		self.int_PID = int_sizeLista
 		self.int_TempIniciacao = int_TempIniciacao
 		self.int_prioridade = int_prioridade
 		self.int_tempDeProcessador = int_tempDeProcessador
@@ -19,6 +20,7 @@ class ClassProcesso:
 
 	def imprimirValoresProcesso(self):
 
+		print("PID = ", self.int_PID)
 		print("Tempo de inicializacao = ", self.int_TempIniciacao)
 		print("Prioridade = ", self.int_prioridade)
 		print("Tempo de processador = ", self.int_tempDeProcessador)

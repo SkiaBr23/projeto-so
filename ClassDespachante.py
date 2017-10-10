@@ -49,7 +49,7 @@ class ClassDespachante:
 								int(atri_Processo[1]), int(atri_Processo[2]),
 								int(atri_Processo[3]), int(atri_Processo[4]),
 								int(atri_Processo[5]), int(atri_Processo[6]),
-								int(atri_Processo[7]))
+								int(atri_Processo[7]), len(vetor_auxiliar))
 
 
 			vetor_auxiliar.append(processo_temporario)
