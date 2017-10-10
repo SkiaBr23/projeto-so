@@ -3,8 +3,14 @@
 
 Repositório do projeto final de Sistemas Operacionais, contendo o desenvolvimento de um pseudo-so multiprogramado
 
-Alunos: Eduardo Schuabb
+Professora:
 
-		Maximillian Xavier
+		Aleteia Favacho
 
-		Rafael Costa
+Alunos: 
+		
+		Eduardo Schuabb - 11/0010876
+
+		Maximillian Xavier - 12/0153271
+
+		Rafael Costa - 12/0133352
