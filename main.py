@@ -3,8 +3,13 @@
 
 
 from ClassProcesso import *
+from ClassInfo import *
 
 def main():
+
+	ClasseInformativo = ClassInfo()
+	ClasseInformativo.limparTela()
+	ClasseInformativo.informativoPrograma()
 
 	linhasArquivo = []
 	vetor_processos = []
@@ -13,8 +18,6 @@ def main():
 
 
 	for linha in linhasArquivo:
-		#print(linha)
-		#print("------------------------------------")
 		atri_Processo = linha.split(",")
 		print(atri_Processo)
 
@@ -27,9 +30,9 @@ def main():
 
 		vetor_processos.append(processo_temporario)
 
-	print(vetor_processos[0].imprimirValoresProcesso())
+	vetor_processos[0].imprimirValoresProcesso()
 	print("-----------------------------------------------")
-	print(vetor_processos[1].imprimirValoresProcesso())
+	vetor_processos[1].imprimirValoresProcesso()
 
 
 
@@ -52,7 +55,8 @@ def lendoArquivoProcesses():
 
 		for line in arquivo:
 			line = line.rstrip("\n")	# Remocao do "\n" no final de linha
-			linhasArquivo.append(line)
+			if line:
+				linhasArquivo.append(line)
 
 	arquivo.close()
 
