@@ -27,3 +27,11 @@ class ClassProcesso:
 		print("Requisicao do Scanner = ", self.int_numReqScanner)
 		print("Requisicao do Modem = ", self.int_numReqModem)
 		print("Num codigo disco = ", self.int_numReqDisco)
+
+
+	def envelhecimento(fila_processos):
+
+		for processo in fila_processos:
+			processo.int_prioridade = processo.int_prioridade - 1
+
+		return fila_processos
