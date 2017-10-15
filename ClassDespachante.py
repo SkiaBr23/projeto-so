@@ -1,6 +1,7 @@
 from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassArquivo import *
+import time
 
 class ClassDespachante:
 
@@ -41,7 +42,7 @@ class ClassDespachante:
 			exit()
 
 
-	def runProcesses (self, linhasArquivoProcesses):
+	def montaFilaProcesses (self, linhasArquivoProcesses):
 
 		vetor_auxiliar = []
 
@@ -54,13 +55,9 @@ class ClassDespachante:
 								int(atri_Processo[5]), int(atri_Processo[6]),
 								int(atri_Processo[7]), len(vetor_auxiliar))
 
-			self.executeProcess(processo_temporario)
-
-
 			vetor_auxiliar.append(processo_temporario)
 
 		return vetor_auxiliar
-
 
 	def lendoArquivoFiles(self):
 
@@ -129,11 +126,23 @@ class ClassDespachante:
 
 		return(vetor_arquivos_auxiliar)
 
+	def runProcesses (self,processos):
+		for processo in processos:
+			self.executeProcess(processo)
 
 	def executeProcess(self, processo):
 		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
 			self.imprimeInicioDeExecucaoProcesso(processo)
-
+			print("process " + str(processo.int_PID))
+			print("P" + str(processo.int_PID) + " STARTED")
+			contadorInstruc = 1
+			contadorCPU = 0
+			tempoAtual = time.time()
+			while (contadorCPU < processo.int_tempDeProcessador):
+				if (time.time() > (tempoAtual+1)):
+					print("P" + str(processo.int_PID) + " instruction " + str(contadorInstruc))
+					contadorCPU += 1
+					tempoAtual = time.time()
 
 	def imprimeProcessos(self, vetorProcessos):
 		for processo in vetorProcessos:
@@ -172,13 +181,15 @@ class ClassDespachante:
 
 		linhasArquivoFiles = self.lendoArquivoFiles()
 
-		vetor_processos = self.runProcesses(linhasArquivoProcesses)
+		vetor_processos = self.montaFilaProcesses(linhasArquivoProcesses)
 
-		vetor_arquivos = self.runFiles(linhasArquivoFiles)
+		self.runProcesses(vetor_processos)
+
+		#vetor_arquivos = self.runFiles(linhasArquivoFiles)
 
 
-		self.imprimeProcessos(vetor_processos)
+		#self.imprimeProcessos(vetor_processos)
 
-		self.imprimeFiles(vetor_arquivos)
+		#self.imprimeFiles(vetor_arquivos)
 
 
