@@ -2,6 +2,7 @@ from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassArquivo import *
 import time
+from threading import *
 
 class ClassDespachante:
 
@@ -9,6 +10,7 @@ class ClassDespachante:
 		self.arquivoProcesses = arquivoProcesses
 		self.arquivoFiles = arquivoFiles
 		self.gerenteMemoria = ClassGerenciadorMemoria()
+		self.lock = Lock()
 
 #
 # Funcao lendoArquivoProcesses()
@@ -128,10 +130,18 @@ class ClassDespachante:
 
 	def runProcesses (self,processos):
 		for processo in processos:
-			self.executeProcess(processo)
+			AVANCAR = True
+			tempoAtual = time.time()
+			while (AVANCAR):
+				#Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
+				if (time.time() >= tempoAtual + processo.int_TempIniciacao):
+					t = Thread(target=self.executeProcess,args=(processo,))
+					t.start()
+					AVANCAR = False
 
 	def executeProcess(self, processo):
 		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
+			self.lock.acquire()
 			self.imprimeInicioDeExecucaoProcesso(processo)
 			print("process " + str(processo.int_PID))
 			print("P" + str(processo.int_PID) + " STARTED")
@@ -142,7 +152,11 @@ class ClassDespachante:
 				if (time.time() > (tempoAtual+1)):
 					print("P" + str(processo.int_PID) + " instruction " + str(contadorInstruc))
 					contadorCPU += 1
+					contadorInstruc += 1
 					tempoAtual = time.time()
+
+			print("P" + str(processo.int_PID) + " return SIGINT")
+			self.lock.release()
 
 	def imprimeProcessos(self, vetorProcessos):
 		for processo in vetorProcessos:
