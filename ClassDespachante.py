@@ -132,13 +132,26 @@ class ClassDespachante:
 
 	def executeProcess(self, processo):
 		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
-			print("dispatcher => ")
+			self.imprimeInicioDeExecucaoProcesso(processo)
 
 
 	def imprimeProcessos(self, vetorProcessos):
 		for processo in vetorProcessos:
 			processo.imprimirValoresProcesso()
 			print("-----------------------------------------------")
+
+	def imprimeInicioDeExecucaoProcesso(self, processo):
+		print("dispatcher => ")
+		print("\tPID: " + str(processo.int_PID))
+		print("\toffset: " + str(self.gerenteMemoria.getOffsetMemoria()))
+		print("\tblocks: " + str(processo.int_blocosDeMem))
+		print("\tpriority: " + str(processo.int_prioridade))
+		print("\ttime: " + str(processo.int_tempDeProcessador))
+		print("\tprinters: " + str(processo.int_numReqImpressora))
+		print("\tscanners: " + str(processo.int_numReqScanner))
+		print("\tmodems: " + str(processo.int_numReqModem))
+		print("\tdrives: " + str(processo.int_numReqDisco))
+		self.gerenteMemoria.atualizaOffsetMemoria(processo.int_blocosDeMem)
 
 
 	def imprimeFiles(self, vetorFiles):
@@ -149,18 +162,19 @@ class ClassDespachante:
 
 	def startSO (self):
 		#Criação das listas de processos e linhas do arquivo .txt de entrada
-		linhasArquivo = []
+		linhasArquivoProcesses = []
+		linhasArquivoFiles = []
 		vetor_processos = []
 		vetor_arquivos = []
 
 		#Leitura das linhas do arquivo .txt de entrada com os processos
-		linhasArquivo = self.lendoArquivoProcesses()
+		linhasArquivoProcesses = self.lendoArquivoProcesses()
 
-		vetor_processos = self.runProcesses(linhasArquivo)
+		linhasArquivoFiles = self.lendoArquivoFiles()
 
-		linhasArquivo = self.lendoArquivoFiles()
+		vetor_processos = self.runProcesses(linhasArquivoProcesses)
 
-		vetor_arquivos = self.runFiles(linhasArquivo)
+		vetor_arquivos = self.runFiles(linhasArquivoFiles)
 
 
 		self.imprimeProcessos(vetor_processos)

@@ -16,6 +16,11 @@ class ClassProcesso:
 		self.int_numReqModem = int_numReqModem
 		self.int_numReqDisco = int_numReqDisco
 
+	def getBlocosMemoria (self):
+		return self.int_blocosDeMem
+
+	def getPrioridade (self):
+		return self.int_prioridade
 
 
 	def imprimirValoresProcesso(self):

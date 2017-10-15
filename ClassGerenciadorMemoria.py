@@ -7,8 +7,43 @@ class ClassGerenciadorMemoria:
 	def __init__(self):
 		self.int_memoria_processos_usuario = TAMANHO_MEMORIA_PROCESSOS_USUARIO
 		self.int_memoria_processos_rt = TAMANHO_MEMORIA_PROCESSOS_RT
+		self.int_offset_memoria = 0
 
 	def verificaDisponibilidadeMemoria(self, processo):
-		return True
+		if (processo.getPrioridade == 0):
+			if (processo.getBlocosMemoria() < self.getMemoriaLivreProcessosRT()):
+				return True
+			else:
+				return False
+		else:
+			if (processo.getBlocosMemoria() < self.getMemoriaLivreProcessosUsuario()):
+				return True
+			else:
+				return True
 
+	def atualizaOffsetMemoria(self, valor):
+		self.int_offset_memoria += valor
 
+	def getOffsetMemoria (self):
+		if (self.int_offset_memoria > 0):
+			return self.int_offset_memoria+1
+		else:
+			return self.int_offset_memoria
+
+	def getMemoriaLivreProcessosUsuario (self):
+		return self.int_memoria_processos_usuario
+
+	def atualizaMemoriaProcessosUsuario (self, valor, operacao):
+		if (operacao == 'aumento'):
+			self.int_memoria_processos_usuario += valor
+		else:
+			self.int_memoria_processos_usuario -= valor
+
+	def getMemoriaLivreProcessosRT (self):
+		return self.int_memoria_processos_rt
+
+	def atualizaMemoriaProcessosRT (self, valor, operacao):
+		if (operacao == 'aumento'):
+			self.int_memoria_processos_rt += valor
+		else:
+			self.int_memoria_processos_rt -= valor
