@@ -155,6 +155,15 @@ class ClassDespachante:
 					t.start()
 					AVANCAR = False
 
+	# Em executeProcess a gente verifica se o processo faz referencia a
+	# manipulacao de arquivos (por meio do PID) e tambem se faz referencia
+	# a algum recurso (modem, impressora...). Caso faca referencia
+	# a algum recurso, travamos ele.
+	# No caso de processos de tempo real, isso eh tranquilo pq eh FIFO sem ser
+	# preemptivo. Entao ele comeca e termina.
+	# No caso de processos de usuario, quando o recurso for alocado, ele so eh
+	# desalocado quando temrinar o processo. (Ainda tem que pensar um pouco mais...)
+
 	def executeProcess(self, processo):
 		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
 			self.lock.acquire()
@@ -205,6 +214,7 @@ class ClassDespachante:
 		linhasArquivoFiles = []
 		vetor_processos = []
 		vetor_arquivos = []
+		vetor_arquivos_deletar = []
 
 		#Leitura das linhas do arquivo .txt de entrada com os processos
 		linhasArquivoProcesses = self.lendoArquivoProcesses()
@@ -213,14 +223,33 @@ class ClassDespachante:
 
 		vetor_processos = self.montaFilaProcesses(linhasArquivoProcesses)
 
-		#self.runProcesses(vetor_processos)
+		# Comentarios de progresso:
+		# Nesse momento vetor_processos estao com processos de tempo real
+		# e processos de usuario. Nao podemos rodar assim, entao aqui temos
+		# que separar antes do runProcesses.
+		# Processos de tempo real eh FIFO
+		# Processos de usuario eh sao minimo 3 filas de prioridades.
+		# Definimos 3 vetores para esses processos.
+		# 
+		# Primeiro: Organizamos por prioridade de processos e executa por meio
+		# 			do RoundRobin(preemptivo com quantum 1).
+		# Segundo: RoundRobin sem definicao por prioridade (quantum 3).
+		# Terceiro: FIFO (nao preemptivo). POSSO ESTAR SENDO RADICAL. ANALISAR
+		#									COM CUIDADO -> Quero evitar Starvation
+		# A execucao dos processos de usuario serao semelhantes as de tempo real
+		# usando o lock e etc.
+
+
+
+
+		self.runProcesses(vetor_processos)
 
 		vetor_arquivos, vetor_arquivos_deletar = self.runFiles(linhasArquivoFiles)
 
 
 		#self.imprimeProcessos(vetor_processos)
 
-		self.imprimeFiles(vetor_arquivos)
-		self.imprimeFiles(vetor_arquivos_deletar)
+		#self.imprimeFiles(vetor_arquivos)
+		#self.imprimeFiles(vetor_arquivos_deletar)
 
 
