@@ -23,7 +23,7 @@ class ClassArquivo:
 	def imprimirValoresArquivo(self):
 		
 		print("ID do processo: ", self.int_ID_Processo)
-		print("Nome do processo: " + self.char_Nome_Arquivo)
+		print("Nome do arquivo: " + self.char_Nome_Arquivo)
 		print("Bloco Inicial: ", self.int_Bloco_Inicial)
 		print("Quantidade de Blocos: ", self.int_Num_Blocos)
 

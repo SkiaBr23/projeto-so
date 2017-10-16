@@ -89,7 +89,7 @@ class ClassDespachante:
 		vetor_arquivos_auxiliar = []
 
 		for linhaTemp in linhasArquivoFiles:
-			print(linhaTemp)
+			#print(linhaTemp)
 		
 			if(contador == 0): # estamos lendo a primeira linha
 				quantBlocosDisco = int(linhaTemp)
@@ -100,10 +100,9 @@ class ClassDespachante:
 				# disco. Criar uma classe arquivo!
 				# ATENCAO: Esses caras nao sao de nenhum processo
 				# ID_processo = -1
-				#arquivo_temporario = ClassArquivo()
 
 				atri_Arquivo = linhaTemp.split(",")
-				print(atri_Arquivo)
+				#print(atri_Arquivo)
 
 				arquivo_temporario = ClassArquivo((-1), atri_Arquivo[0],
 													int(atri_Arquivo[1]),
@@ -113,17 +112,31 @@ class ClassDespachante:
 
 
 			if(contador > (quantSegmenOcupadosDisco + 1)):
-				print("AQUIIIIII 2")
-				# Aqui, temos que verificar se eh para criacar o arquivo
-				# ou se eh para deletar o arquivo.
-				# Nesse caso, temos os arquivos que sao criados ao
-				# longo da execucao dos processos.
-				# Verificar a logica de execucao do trabalho para
-				# saber quando que o arquivo vai ser criado.
+				# Nesse momento, colocamos os arquivos que sao criados
+				# por processos no vetor de arquivos.
+				# ATENCAO: Esses arquivos nao possuem int_Bloco_Inicial.
+				# logo, sera colocado -1.
+				
+				atri_Arquivo = linhaTemp.split(",")
+				#print(atri_Arquivo)
 
+				if(atri_Arquivo[1] == "0"):
+					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
+														atri_Arquivo[2],
+														(-1),	# Bloco inicial
+														int(atri_Arquivo[3]))
+			
+					vetor_arquivos_auxiliar.append(arquivo_temporario)
 
-			print("------------------------------------")
+				else: # Nesse caso, temos os arquivos que devem ser deletados 
+					  # do disco.
+					pass
+					print("Comando para deletar arquivo")
+
+			#print("------------------------------------")
 			contador = contador + 1
+
+		self.imprimeFiles(vetor_arquivos_auxiliar)
 
 
 		return(vetor_arquivos_auxiliar)
@@ -197,9 +210,9 @@ class ClassDespachante:
 
 		vetor_processos = self.montaFilaProcesses(linhasArquivoProcesses)
 
-		self.runProcesses(vetor_processos)
+		#self.runProcesses(vetor_processos)
 
-		#vetor_arquivos = self.runFiles(linhasArquivoFiles)
+		vetor_arquivos = self.runFiles(linhasArquivoFiles)
 
 
 		#self.imprimeProcessos(vetor_processos)
