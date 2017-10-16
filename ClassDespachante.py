@@ -87,6 +87,7 @@ class ClassDespachante:
 		contador = 0 
 		quantSegmenOcupadosDisco = 0
 		vetor_arquivos_auxiliar = []
+		vetor_arquivos_deletar = []
 
 		for linhaTemp in linhasArquivoFiles:
 			#print(linhaTemp)
@@ -118,7 +119,7 @@ class ClassDespachante:
 				# logo, sera colocado -1.
 				
 				atri_Arquivo = linhaTemp.split(",")
-				#print(atri_Arquivo)
+				
 
 				if(atri_Arquivo[1] == "0"):
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
@@ -130,16 +131,18 @@ class ClassDespachante:
 
 				else: # Nesse caso, temos os arquivos que devem ser deletados 
 					  # do disco.
-					pass
-					print("Comando para deletar arquivo")
+					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
+														atri_Arquivo[2],
+														(-1),	# BlocoInicial
+														(-1))	# TamanhoBlobo
+					vetor_arquivos_deletar.append(arquivo_temporario)
 
 			#print("------------------------------------")
 			contador = contador + 1
 
-		self.imprimeFiles(vetor_arquivos_auxiliar)
 
 
-		return(vetor_arquivos_auxiliar)
+		return(vetor_arquivos_auxiliar, vetor_arquivos_deletar)
 
 	def runProcesses (self,processos):
 		for processo in processos:
@@ -212,11 +215,12 @@ class ClassDespachante:
 
 		#self.runProcesses(vetor_processos)
 
-		vetor_arquivos = self.runFiles(linhasArquivoFiles)
+		vetor_arquivos, vetor_arquivos_deletar = self.runFiles(linhasArquivoFiles)
 
 
 		#self.imprimeProcessos(vetor_processos)
 
-		#self.imprimeFiles(vetor_arquivos)
+		self.imprimeFiles(vetor_arquivos)
+		self.imprimeFiles(vetor_arquivos_deletar)
 
 
