@@ -86,8 +86,8 @@ class ClassDespachante:
 
 		contador = 0 
 		quantSegmenOcupadosDisco = 0
-		vetor_arquivos_auxiliar = []
-		vetor_arquivos_deletar = []
+		vetor_arquivos_disco = []
+		vetor_arquivos_processos = []
 
 		for linhaTemp in linhasArquivoFiles:
 			#print(linhaTemp)
@@ -109,7 +109,7 @@ class ClassDespachante:
 													int(atri_Arquivo[1]),
 													int(atri_Arquivo[2]))
 
-				vetor_arquivos_auxiliar.append(arquivo_temporario)
+				vetor_arquivos_processos.append(arquivo_temporario)
 
 
 			if(contador > (quantSegmenOcupadosDisco + 1)):
@@ -127,7 +127,7 @@ class ClassDespachante:
 														(-1),	# Bloco inicial
 														int(atri_Arquivo[3]))
 			
-					vetor_arquivos_auxiliar.append(arquivo_temporario)
+					vetor_arquivos_processos.append(arquivo_temporario)
 
 				else: # Nesse caso, temos os arquivos que devem ser deletados 
 					  # do disco.
@@ -135,14 +135,14 @@ class ClassDespachante:
 														atri_Arquivo[2],
 														(-1),	# BlocoInicial
 														(-1))	# TamanhoBlobo
-					vetor_arquivos_deletar.append(arquivo_temporario)
+					vetor_arquivos_processos.append(arquivo_temporario)
 
 			#print("------------------------------------")
 			contador = contador + 1
 
-
-
-		return(vetor_arquivos_auxiliar, vetor_arquivos_deletar)
+		# Retorna 3 vetores de arquivos.
+		# os que ja estao em disco, os que 
+		return(vetor_arquivos_disco, vetor_arquivos_processos)
 
 	def runProcesses (self,processos):
 		for processo in processos:
@@ -184,9 +184,12 @@ class ClassDespachante:
 			self.lock.release()
 
 	def imprimeProcessos(self, vetorProcessos):
-		for processo in vetorProcessos:
-			processo.imprimirValoresProcesso()
-			print("-----------------------------------------------")
+		if not vetorProcessos:
+			print("Vetor de processos vazio")
+		else:
+			for processo in vetorProcessos:
+				processo.imprimirValoresProcesso()
+				print("-----------------------------------------------")
 
 	def imprimeInicioDeExecucaoProcesso(self, processo):
 		print("dispatcher => ")
@@ -203,9 +206,26 @@ class ClassDespachante:
 
 
 	def imprimeFiles(self, vetorFiles):
-		for files in vetorFiles:
-			files.imprimirValoresArquivo()
-			print("-----------------------------------------------")			
+		if not vetorProcessos:
+			print("Vetor de arquivos vazio")
+		else:
+			for files in vetorFiles:
+				files.imprimirValoresArquivo()
+				print("-----------------------------------------------")			
+
+
+	def separaProcessos(self, vetor_processos):
+		processos_usuario = []
+		processos_tempoReal = []
+
+		for processo in vetor_processos:
+			if(processo.getPrioridade == 0):
+				processos_tempoReal.append(processo)
+			else:
+				processos_usuario.append(processo)
+
+		return(processos_usuario, processos_tempoReal)
+
 
 
 	def startSO (self):
@@ -213,8 +233,10 @@ class ClassDespachante:
 		linhasArquivoProcesses = []
 		linhasArquivoFiles = []
 		vetor_processos = []
-		vetor_arquivos = []
-		vetor_arquivos_deletar = []
+		vetor_arquivos_disco = []
+		vetor_arquivos_processos = []
+		vetor_processos_tempoReal = []
+		vetor_processos_usuario = []
 
 		#Leitura das linhas do arquivo .txt de entrada com os processos
 		linhasArquivoProcesses = self.lendoArquivoProcesses()
@@ -224,11 +246,10 @@ class ClassDespachante:
 		vetor_processos = self.montaFilaProcesses(linhasArquivoProcesses)
 
 		# Comentarios de progresso:
-		# Nesse momento vetor_processos estao com processos de tempo real
-		# e processos de usuario. Nao podemos rodar assim, entao aqui temos
-		# que separar antes do runProcesses.
+		# Separei os processos. Agora temos que pensar em como executa-los.
 		# Processos de tempo real eh FIFO
 		# Processos de usuario eh sao minimo 3 filas de prioridades.
+		# Minha ideia:
 		# Definimos 3 vetores para esses processos.
 		# 
 		# Primeiro: Organizamos por prioridade de processos e executa por meio
@@ -239,17 +260,23 @@ class ClassDespachante:
 		# A execucao dos processos de usuario serao semelhantes as de tempo real
 		# usando o lock e etc.
 
+		vetor_processos_tempoReal, vetor_processos_usuario = self.separaProcessos(vetor_processos)
+		#self.imprimeProcessos(vetor_processos_tempoReal)
+
+
+		self.runProcesses(vetor_processos_tempoReal)
+
+
+		# vetor_arquivos_disco = arquivos ja em disco
+		# vetor_arquivos_processos = arquivos que serao executados por processos
+		# pode ser tanto para instrucoes de deletar como criar. Salvos na ordem
+		# do arquivo.
+		vetor_arquivos_disco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
 
 
 
-		self.runProcesses(vetor_processos)
-
-		vetor_arquivos, vetor_arquivos_deletar = self.runFiles(linhasArquivoFiles)
-
-
-		#self.imprimeProcessos(vetor_processos)
-
-		#self.imprimeFiles(vetor_arquivos)
-		#self.imprimeFiles(vetor_arquivos_deletar)
+		#self.imprimeFiles(vetor_arquivos_disco)
+		#self.imprimeFiles(vetor_arquivos_processos)
+		
 
 
