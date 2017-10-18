@@ -1,3 +1,4 @@
+#encoding=utf-8
 from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassArquivo import *
