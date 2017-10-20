@@ -17,6 +17,17 @@ class ClassArquivo:
 		self.int_Bloco_Inicial = int_Bloco_Inicial
 
 
+	def getIDProcesso (self):
+		return self.int_ID_Processo
+
+	def getBlocoInicial (self):
+		return self.int_Bloco_Inicial
+
+	def getNumBlocos (self):
+		return self.int_Num_Blocos
+
+	def getNomeArquivo (self):
+		return self.char_Nome_Arquivo
 
 
 

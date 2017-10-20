@@ -23,6 +23,9 @@ class ClassProcesso:
 	def getPrioridade (self):
 		return self.int_prioridade
 
+	def getPID (self):
+		return self.int_PID
+
 
 	def imprimirValoresProcesso(self):
 
