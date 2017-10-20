@@ -143,13 +143,13 @@ class ClassDespachante:
 			#print("------------------------------------")
 			contador = contador + 1
 
+		posicoesDisco = []						# Nessa parte, temos que posicoesDisco seria a simulacao do disco
+		for posicao in range(quantBlocosDisco):	# eh um vetor de char que possui as posicoes relativas de onde os 
+			posicoesDisco.append("0")			# arquivos estao salvos.
 
-		posicoesDisco = []
-		for posicao in range(quantBlocosDisco):
-			posicoesDisco.append("0")
-
-
-
+		# Inserir os arquivos que estao no vetor_arquivos_disco (salvos no disco)
+		# nas posicoes do vetor posicoesDisco.
+		posicoesDisco = self.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
 
 		print(posicoesDisco)
 
@@ -160,6 +160,18 @@ class ClassDespachante:
 		# vetor_arquivos_processos = Vetor de classeArquivo com os dados dos arquivos
 		#						que devem ser salvos no disco.
 		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
+
+
+	# Funcao criada para inserir os arquivos que ja estao no
+	# disco no momento de iniciacao do programa.
+	def inserirInicioDisco(self, vetor_arquivos_disco, posicoesDisco):
+
+		for arquivo in vetor_arquivos_disco:
+			for posicoesArquivo in range(arquivo.getBlocoInicial(), (arquivo.getBlocoInicial() + arquivo.getNumBlocos())):
+				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
+		
+		return (posicoesDisco)
+
 
 	def runProcesses (self,processos, vetor_arquivos_processos,
 						vetor_arquivos_disco, posicoesDisco):
@@ -174,20 +186,33 @@ class ClassDespachante:
 					AVANCAR = False
 
 	# Em executeProcess a gente verifica se o processo faz referencia a
-	# manipulacao de arquivos (por meio do PID) e tambem se faz referencia
-	# a algum recurso (modem, impressora...). Caso faca referencia
-	# a algum recurso, travamos ele.
+	# manipulacao de arquivos (por meio do PID) ------------------------------------------> DONE
+	
+	# e tambem se faz referencia a algum recurso (modem, impressora...). Caso faca referencia
+	# a algum recurso, travamos ele. -----------------------------------------------------> NOT DONE
+	
 	# No caso de processos de tempo real, isso eh tranquilo pq eh FIFO sem ser
 	# preemptivo. Entao ele comeca e termina.
 	# No caso de processos de usuario, quando o recurso for alocado, ele so eh
 	# desalocado quando temrinar o processo. (Ainda tem que pensar um pouco mais...)
+	#-------------------------------------------------------------------------------------------------------
 
+		# Um grande problema eh que no roteiro da professora, a manipulacao dos arquivos nao esta seguindo a ordem
+		# de execucao dos processos e sim a ordem de execucao do arquivo. Nao faz sentido essa ordem do roteiro.
+		# Eu estou seguindo a ordem de execucao dos processos. Na funcao executeProcess, eu faco a busca dos arquivos
+		# que sao referenciados pelo processo que esta sendo executado. Ou seja, a primeira operacao de arquivo seria
+		# com o processo 0, ja no exemplo dela, a primeira eh com o processo 1. O que eu meu entendimento esta errado.
+
+	#--------------------------------------------------------------------------------------------------------
+
+	# O que falta: Fazer a verificacao de outras operacoes que manipulam arquivos de um mesmo processo.
+	# Com essa logica que eu pensei tempos, por enquanto: Uma manupulacao de arquivo por processo.
 	def executeProcess(self, processo, vetor_arquivos_processos,
 						vetor_arquivos_disco, posicoesDisco):
 		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
 			self.lock.acquire()
-			self.manipulaArquivo(processo.getPID(), vetor_arquivos_processos,
-								vetor_arquivos_disco, posicoesDisco)
+			self.manipulaArquivo(processo.getPID(), vetor_arquivos_processos,			# Linha nova!
+								vetor_arquivos_disco, posicoesDisco)					# Linha nova!
 			self.imprimeInicioDeExecucaoProcesso(processo)
 			print("process " + str(processo.int_PID))
 			print("P" + str(processo.int_PID) + " STARTED")
@@ -205,6 +230,9 @@ class ClassDespachante:
 			self.lock.release()
 
 
+	# Nessa funcao, buscamos o primeiro arquivo no array(que foram inseridos na ordem do arquivo)
+	# que esteja relacionado ao processo em execucao. Nesse caso, verificamos se eh um processo de
+	# criacao ou remocao de arquivo.
 	def manipulaArquivo(self, idProcesso, vetor_arquivos_processos,
 						vetor_arquivos_disco, posicoesDisco):
 
@@ -225,31 +253,64 @@ class ClassDespachante:
 		else:
 			print("Instrucao para deletar arquivo...")
 
-			self.deletarArquivoDisco(arquivo, vetor_arquivos_disco)
+			self.deletarArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco)
 
-
+	# Funcao para inserir um arquivo no disco. Essa funcao eh diferente da inserirInicioDisco
+	# pois nesse caso essa funcao realiza uma verificacao no disco.
+	# verifica se o arquivo ja foi inserido e verifica se possui espaco. ---------------------------> DONE
+	# Quando inserir um arquivo no disco, devemos remover esse mesmo 
+	# arquivo em vetor_arquivos_processos.----------------------------------------------------------> NOT DONE
+	#
 	def inserirArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco):
 		
 		flagInserir = 0
+		tamanhoArquivo = arquivo.getNumBlocos()
 
 		for arquivo_temporario in vetor_arquivos_disco:
 			if(arquivo.getNomeArquivo() == arquivo_temporario.getNomeArquivo()):
 				print("Arquivo ja existe no disco!")
 				return (-1)
 
-		for posicoesArquivo in range(arquivo.getBlocoInicial(), (arquivo.getBlocoInicial() + arquivo.getNumBlocos() - 1)):
-			if(posicoesDisco[posicoesArquivo] != "0"):
-				flagInserir = 1
+		for posicoesArquivo in range(len(posicoesDisco)):
+			if(posicoesDisco[posicoesArquivo] == "0"):
+				tamanhoArquivo = tamanhoArquivo - 1
+			else:
+				tamanhoArquivo = arquivo.getNumBlocos()
 
+			if(tamanhoArquivo == 0):
+				print("o arquivo cabe entre as posicoes: ", (posicoesArquivo - arquivo.getNumBlocos() + 1), "a", posicoesArquivo)
+				break
 
-		if(flagInserir == 1):
-			print("Espaco ocupado por outro arquivo...")
+		if(tamanhoArquivo != 0):
+			print("Nao existe espaco para o arquivo...")
 		else:
-			print("Espaco livre para inserir...")
+			for posicoesArquivo in range((posicoesArquivo - arquivo.getNumBlocos() + 1), (posicoesArquivo + 1)):
+				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
 
 
+		print(posicoesDisco)
+
+		return (vetor_arquivos_disco, posicoesDisco)
+
+
+	# Funcao nao testada! Verificar funcionamento.
+	# Como temos dois arrays relacionados com os arquivos em disco,
+	# temos que nos preocupar em remover o arquivo de ambas referencias.
 	def deletarArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco):
-		pass
+		
+		for index in range(len(vetor_arquivos_disco)):
+			if(vetor_arquivos_disco[index].getNomeArquivo() == arquivo.getNomeArquivo()):
+				break
+
+		del vetor_arquivos_disco[index]
+
+
+		for posicoesArquivo in range(len(posicoesDisco)):
+			if(posicoesDisco[posicoesArquivo] == arquivo.getNomeArquivo()):
+				posicoesDisco[posicoesArquivo] = "0"
+
+
+		return (vetor_arquivos_disco, posicoesDisco)
 
 
 
