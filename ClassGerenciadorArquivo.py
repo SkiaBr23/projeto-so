@@ -1,6 +1,17 @@
 #encoding=utf-8
 
 class ClassGerenciadorArquivo:
+
+
+	# Funcao criada para inserir os arquivos que ja estao no
+	# disco no momento de iniciacao do programa.
+	def inserirInicioDisco(self, vetor_arquivos_disco, posicoesDisco):
+
+		for arquivo in vetor_arquivos_disco:
+			for posicoesArquivo in range(arquivo.getBlocoInicial(), (arquivo.getBlocoInicial() + arquivo.getNumBlocos())):
+				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
+		
+		return (posicoesDisco)
 	
 	# Nessa funcao, buscamos o primeiro arquivo no array(que foram inseridos na ordem do arquivo)
 	# que esteja relacionado ao processo em execucao. Nesse caso, verificamos se eh um processo de
@@ -84,3 +95,11 @@ class ClassGerenciadorArquivo:
 
 		return (vetor_arquivos_disco, posicoesDisco)
 
+
+	def imprimeFiles(self, vetorFiles):
+		if not vetorFiles:
+			print("Vetor de arquivos vazio")
+		else:
+			for files in vetorFiles:
+				files.imprimirValoresArquivo()
+				print("-----------------------------------------------")	
