@@ -1,3 +1,5 @@
+#encoding=utf-8
+
 # Para executar o programa:
 #	python3 teste1.py
 
