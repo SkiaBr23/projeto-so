@@ -6,6 +6,7 @@ from ClassGerenciadorRecurso import *
 from ClassGerenciadorArquivo import *
 import time
 from threading import *
+import operator
 
 class ClassGerenciadorProcesso:
 
@@ -28,7 +29,11 @@ class ClassGerenciadorProcesso:
 								int(atri_Processo[5]), int(atri_Processo[6]),
 								int(atri_Processo[7]), len(vetor_auxiliar))
             vetor_auxiliar.append(processo_temporario)
-        self.processos_all = vetor_auxiliar
+        self.processos_all = self.organizaViaTempInicializacao(vetor_auxiliar)
+
+    def organizaViaTempInicializacao(self, vetor_processos):
+        vetor_processos.sort(key = operator.attrgetter('int_TempIniciacao'))
+        return vetor_processos
 
     def separaProcessos(self, vetor_processos):
         processos_usuario = []
