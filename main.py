@@ -2,9 +2,6 @@
 
 # Para executar o programa:
 #	python3 teste1.py
-
-
-from ClassProcesso import *
 from ClassInfo import *
 from ClassDespachante import *
 import sys

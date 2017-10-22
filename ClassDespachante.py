@@ -1,7 +1,7 @@
 #encoding=utf-8
 import time
 from threading import *
-from ClassProcesso import *
+from ClassGerenciadorProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassGerenciadorArquivo import *
 from ClassGerenciadorRecurso import *
@@ -15,7 +15,7 @@ class ClassDespachante:
 		self.gerenteMemoria = ClassGerenciadorMemoria()
 		self.gerenteArquivo = ClassGerenciadorArquivo()
 		self.gerenteRecursos = ClassGerenciadorRecurso()
-		self.lock = Lock()
+		self.gerenteProcessos = ClassGerenciadorProcesso()
 
 #
 # Funcao lendoArquivoProcesses()
@@ -47,24 +47,6 @@ class ClassDespachante:
 		except FileNotFoundError:
 			print("Arquivo contendo os processos não encontrado, encerrando")
 			exit()
-
-
-	def montaFilaProcesses (self, linhasArquivoProcesses):
-
-		vetor_auxiliar = []
-
-		for linha in linhasArquivoProcesses:
-			atri_Processo = linha.split(",")
-
-			processo_temporario = ClassProcesso(int(atri_Processo[0]),
-								int(atri_Processo[1]), int(atri_Processo[2]),
-								int(atri_Processo[3]), int(atri_Processo[4]),
-								int(atri_Processo[5]), int(atri_Processo[6]),
-								int(atri_Processo[7]), len(vetor_auxiliar))
-
-			vetor_auxiliar.append(processo_temporario)
-
-		return vetor_auxiliar
 
 	def lendoArquivoFiles(self):
 
@@ -166,18 +148,6 @@ class ClassDespachante:
 		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
 
 
-	def runProcesses (self,processos, vetor_arquivos_processos,
-						vetor_arquivos_disco, posicoesDisco):
-		for processo in processos:
-			AVANCAR = True
-			tempoAtual = time.time()
-			while (AVANCAR):
-				#Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
-				if (time.time() >= tempoAtual + processo.int_TempIniciacao):
-					t = Thread(target=self.executeProcess,args=(processo, vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco,))
-					t.start()
-					AVANCAR = False
-
 	# Em executeProcess a gente verifica se o processo faz referencia a
 	# manipulacao de arquivos (por meio do PID) ------------------------------------------> DONE
 
@@ -200,27 +170,6 @@ class ClassDespachante:
 
 	# O que falta: Fazer a verificacao de outras operacoes que manipulam arquivos de um mesmo processo.
 	# Com essa logica que eu pensei tempos, por enquanto: Uma manupulacao de arquivo por processo.
-	def executeProcess(self, processo, vetor_arquivos_processos,
-						vetor_arquivos_disco, posicoesDisco):
-		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo) and self.gerenteRecursos.verificaDisponibilidadeRecursos(processo)):
-			self.lock.acquire()
-			self.gerenteArquivo.manipulaArquivo(processo.getPID(), vetor_arquivos_processos,			# Linha nova!
-								vetor_arquivos_disco, posicoesDisco)					# Linha nova!
-			self.imprimeInicioDeExecucaoProcesso(processo)
-			print("process " + str(processo.int_PID))
-			print("P" + str(processo.int_PID) + " STARTED")
-			contadorInstruc = 1
-			contadorCPU = 0
-			tempoAtual = time.time()
-			while (contadorCPU < processo.int_tempDeProcessador):
-				if (time.time() > (tempoAtual+1)):
-					print("P" + str(processo.int_PID) + " instruction " + str(contadorInstruc))
-					contadorCPU += 1
-					contadorInstruc += 1
-					tempoAtual = time.time()
-
-			print("P" + str(processo.int_PID) + " return SIGINT")
-			self.lock.release()
 
 
 	def imprimeProcessos(self, vetorProcessos):
@@ -230,34 +179,6 @@ class ClassDespachante:
 			for processo in vetorProcessos:
 				processo.imprimirValoresProcesso()
 				print("-----------------------------------------------")
-
-	def imprimeInicioDeExecucaoProcesso(self, processo):
-		print("dispatcher => ")
-		print("\tPID: " + str(processo.int_PID))
-		print("\toffset: " + str(self.gerenteMemoria.getOffsetMemoria()))
-		print("\tblocks: " + str(processo.int_blocosDeMem))
-		print("\tpriority: " + str(processo.int_prioridade))
-		print("\ttime: " + str(processo.int_tempDeProcessador))
-		print("\tprinters: " + str(processo.int_numReqImpressora))
-		print("\tscanners: " + str(processo.int_numReqScanner))
-		print("\tmodems: " + str(processo.int_numReqModem))
-		print("\tdrives: " + str(processo.int_numReqDisco))
-		self.gerenteMemoria.atualizaOffsetMemoria(processo.int_blocosDeMem)
-
-
-	def separaProcessos(self, vetor_processos):
-		processos_usuario = []
-		processos_tempoReal = []
-
-		for processo in vetor_processos:
-			if(processo.getPrioridade == 0):
-				processos_tempoReal.append(processo)
-			else:
-				processos_usuario.append(processo)
-
-		return(processos_usuario, processos_tempoReal)
-
-
 
 	def startSO (self):
 		#Criação das listas de processos e linhas do arquivo .txt de entrada
@@ -275,7 +196,7 @@ class ClassDespachante:
 
 		linhasArquivoFiles = self.lendoArquivoFiles()
 
-		vetor_processos = self.montaFilaProcesses(linhasArquivoProcesses)
+		self.gerenteProcessos.montaFilaProcesses(linhasArquivoProcesses)
 
 		# Comentarios de progresso:
 		# Separei os processos. Agora temos que pensar em como executa-los.
@@ -292,14 +213,10 @@ class ClassDespachante:
 		# A execucao dos processos de usuario serao semelhantes as de tempo real
 		# usando o lock e etc.
 
-		vetor_processos_tempoReal, vetor_processos_usuario = self.separaProcessos(vetor_processos)
+		self.gerenteProcessos.separaProcessos(self.gerenteProcessos.getProcessos())
 		#self.imprimeProcessos(vetor_processos_tempoReal)
 		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
-
-
-
-
-		self.runProcesses(vetor_processos_tempoReal, vetor_arquivos_processos,
+		self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,
 							vetor_arquivos_disco, posicoesDisco)
 
 
