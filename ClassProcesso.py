@@ -16,6 +16,13 @@ class ClassProcesso:
 		self.int_numReqScanner = int_numReqScanner
 		self.int_numReqModem = int_numReqModem
 		self.int_numReqDisco = int_numReqDisco
+		self.int_aposTempInicializacao = 0
+
+	def getAposTempInicializacao(self):
+		return self.int_aposTempInicializacao
+
+	def setAposTempInicializacao(self):
+		self.int_aposTempInicializacao = 1
 
 	def getRequisicaoScanner (self):
 		return self.int_numReqScanner

@@ -16,6 +16,7 @@ class ClassDespachante:
 		self.gerenteArquivo = ClassGerenciadorArquivo()
 		self.gerenteRecursos = ClassGerenciadorRecurso()
 		self.gerenteProcessos = ClassGerenciadorProcesso()
+		self.gerenteFilas = ClassGerenciadorFilas()
 
 #
 # Funcao lendoArquivoProcesses()
@@ -196,7 +197,7 @@ class ClassDespachante:
 
 		linhasArquivoFiles = self.lendoArquivoFiles()
 
-		self.gerenteProcessos.montaFilaProcesses(linhasArquivoProcesses)
+		lista_processos = self.gerenteProcessos.montaListaProcesses(linhasArquivoProcesses)
 
 		# Comentarios de progresso:
 		# Separei os processos. Agora temos que pensar em como executa-los.
@@ -213,11 +214,14 @@ class ClassDespachante:
 		# A execucao dos processos de usuario serao semelhantes as de tempo real
 		# usando o lock e etc.
 
-		self.gerenteProcessos.separaProcessos(self.gerenteProcessos.getProcessos())
+		#Comentei esse separaProcessos pq nao faz sentido ja manter eles separados sem saber se tem os recursos
+		#self.gerenteProcessos.separaProcessos(self.gerenteProcessos.getProcessos())
 		#self.imprimeProcessos(vetor_processos_tempoReal)
-		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
-		self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,
-							vetor_arquivos_disco, posicoesDisco)
+		#Comentei o runFiles pq nao preciso disso agora
+		#vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
+		self.gerenteFilas.setListaProcessos(lista_processos)
+		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
+		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
 
 
 		# vetor_arquivos_disco = arquivos ja em disco
