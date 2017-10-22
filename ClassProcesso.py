@@ -17,6 +17,18 @@ class ClassProcesso:
 		self.int_numReqModem = int_numReqModem
 		self.int_numReqDisco = int_numReqDisco
 
+	def getRequisicaoScanner (self):
+		return self.int_numReqScanner
+
+	def getRequisicaoModem (self):
+		return self.int_numReqModem
+
+	def getRequisicaoImpressora (self):
+		return self.int_numReqImpressora
+
+	def getRequisicaoDisco (self):
+		return self.int_numReqDisco
+
 	def getBlocosMemoria (self):
 		return self.int_blocosDeMem
 

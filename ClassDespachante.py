@@ -3,6 +3,7 @@ from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassArquivo import *
 from ClassGerenciadorArquivo import *
+from ClassGerenciadorRecurso import *
 import time
 from threading import *
 
@@ -13,6 +14,7 @@ class ClassDespachante:
 		self.arquivoFiles = arquivoFiles
 		self.gerenteMemoria = ClassGerenciadorMemoria()
 		self.gerenteArquivo = ClassGerenciadorArquivo()
+		self.gerenteRecursos = ClassGerenciadorRecurso()
 		self.lock = Lock()
 
 #
@@ -87,7 +89,7 @@ class ClassDespachante:
 
 	def runFiles(self, linhasArquivoFiles):
 
-		contador = 0 
+		contador = 0
 		quantBlocosDisco = 0
 		quantSegmenOcupadosDisco = 0
 		vetor_arquivos_disco = []
@@ -97,7 +99,7 @@ class ClassDespachante:
 
 		for linhaTemp in linhasArquivoFiles:
 			#print(linhaTemp)
-		
+
 			if(contador == 0): # estamos lendo a primeira linha
 				quantBlocosDisco = int(linhaTemp)
 			if(contador == 1):
@@ -122,19 +124,19 @@ class ClassDespachante:
 				# por processos no vetor de arquivos.
 				# ATENCAO: Esses arquivos nao possuem int_Bloco_Inicial.
 				# logo, sera colocado -1.
-				
+
 				atri_Arquivo = linhaTemp.split(",")
-				
+
 
 				if(atri_Arquivo[1] == "0"):
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
 														(-1),	# Bloco inicial
 														int(atri_Arquivo[3]))
-			
+
 					vetor_arquivos_processos.append(arquivo_temporario)
 
-				else: # Nesse caso, temos os arquivos que devem ser deletados 
+				else: # Nesse caso, temos os arquivos que devem ser deletados
 					  # do disco.
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
@@ -146,7 +148,7 @@ class ClassDespachante:
 			contador = contador + 1
 
 		posicoesDisco = []						# Nessa parte, temos que posicoesDisco seria a simulacao do disco
-		for posicao in range(quantBlocosDisco):	# eh um vetor de char que possui as posicoes relativas de onde os 
+		for posicao in range(quantBlocosDisco):	# eh um vetor de char que possui as posicoes relativas de onde os
 			posicoesDisco.append("0")			# arquivos estao salvos.
 
 		# Inserir os arquivos que estao no vetor_arquivos_disco (salvos no disco)
@@ -171,7 +173,7 @@ class ClassDespachante:
 		for arquivo in vetor_arquivos_disco:
 			for posicoesArquivo in range(arquivo.getBlocoInicial(), (arquivo.getBlocoInicial() + arquivo.getNumBlocos())):
 				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
-		
+
 		return (posicoesDisco)
 
 
@@ -189,10 +191,10 @@ class ClassDespachante:
 
 	# Em executeProcess a gente verifica se o processo faz referencia a
 	# manipulacao de arquivos (por meio do PID) ------------------------------------------> DONE
-	
+
 	# e tambem se faz referencia a algum recurso (modem, impressora...). Caso faca referencia
 	# a algum recurso, travamos ele. -----------------------------------------------------> NOT DONE
-	
+
 	# No caso de processos de tempo real, isso eh tranquilo pq eh FIFO sem ser
 	# preemptivo. Entao ele comeca e termina.
 	# No caso de processos de usuario, quando o recurso for alocado, ele so eh
@@ -211,7 +213,7 @@ class ClassDespachante:
 	# Com essa logica que eu pensei tempos, por enquanto: Uma manupulacao de arquivo por processo.
 	def executeProcess(self, processo, vetor_arquivos_processos,
 						vetor_arquivos_disco, posicoesDisco):
-		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
+		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo) and self.gerenteRecursos.verificaDisponibilidadeRecursos(processo)):
 			self.lock.acquire()
 			self.gerenteArquivo.manipulaArquivo(processo.getPID(), vetor_arquivos_processos,			# Linha nova!
 								vetor_arquivos_disco, posicoesDisco)					# Linha nova!
@@ -260,7 +262,7 @@ class ClassDespachante:
 		else:
 			for files in vetorFiles:
 				files.imprimirValoresArquivo()
-				print("-----------------------------------------------")			
+				print("-----------------------------------------------")
 
 
 	def separaProcessos(self, vetor_processos):
@@ -301,7 +303,7 @@ class ClassDespachante:
 		# Processos de usuario eh sao minimo 3 filas de prioridades.
 		# Minha ideia:
 		# Definimos 3 vetores para esses processos.
-		# 
+		#
 		# Primeiro: Organizamos por prioridade de processos e executa por meio
 		# 			do RoundRobin(preemptivo com quantum 1).
 		# Segundo: RoundRobin sem definicao por prioridade (quantum 3).
@@ -325,12 +327,9 @@ class ClassDespachante:
 		# vetor_arquivos_processos = arquivos que serao executados por processos
 		# pode ser tanto para instrucoes de deletar como criar. Salvos na ordem
 		# do arquivo.
-		
+
 
 
 
 		#self.imprimeFiles(vetor_arquivos_disco)
 		#self.imprimeFiles(vetor_arquivos_processos)
-		
-
-
