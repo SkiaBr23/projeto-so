@@ -2,6 +2,7 @@
 from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassArquivo import *
+from ClassGerenciadorArquivo import *
 import time
 from threading import *
 
