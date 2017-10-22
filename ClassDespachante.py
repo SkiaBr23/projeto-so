@@ -12,6 +12,7 @@ class ClassDespachante:
 		self.arquivoProcesses = arquivoProcesses
 		self.arquivoFiles = arquivoFiles
 		self.gerenteMemoria = ClassGerenciadorMemoria()
+		self.gerenteArquivo = ClassGerenciadorArquivo()
 		self.lock = Lock()
 
 #
@@ -212,7 +213,7 @@ class ClassDespachante:
 						vetor_arquivos_disco, posicoesDisco):
 		if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
 			self.lock.acquire()
-			self.manipulaArquivo(processo.getPID(), vetor_arquivos_processos,			# Linha nova!
+			self.gerenteArquivo.manipulaArquivo(processo.getPID(), vetor_arquivos_processos,			# Linha nova!
 								vetor_arquivos_disco, posicoesDisco)					# Linha nova!
 			self.imprimeInicioDeExecucaoProcesso(processo)
 			print("process " + str(processo.int_PID))

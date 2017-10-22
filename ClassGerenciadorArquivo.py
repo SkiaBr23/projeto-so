@@ -1,12 +1,6 @@
 #encoding=utf-8
 
 class ClassGerenciadorArquivo:
-
-	def __init__(self):
-		self.int_memoria_processos_usuario = TAMANHO_MEMORIA_PROCESSOS_USUARIO
-		self.int_memoria_processos_rt = TAMANHO_MEMORIA_PROCESSOS_RT
-		self.int_offset_memoria = 0
-
 	
 	# Nessa funcao, buscamos o primeiro arquivo no array(que foram inseridos na ordem do arquivo)
 	# que esteja relacionado ao processo em execucao. Nesse caso, verificamos se eh um processo de
