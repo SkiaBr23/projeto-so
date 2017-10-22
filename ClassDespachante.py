@@ -5,6 +5,7 @@ from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassGerenciadorArquivo import *
 from ClassGerenciadorRecurso import *
+from ClassGerenciadorFilas import *
 
 class ClassDespachante:
 
