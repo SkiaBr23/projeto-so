@@ -1,7 +1,6 @@
 #encoding=utf-8
 import time
 from threading import *
-from ClassArquivo import *
 from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassGerenciadorArquivo import *

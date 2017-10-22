@@ -1,4 +1,5 @@
 #encoding=utf-8
+from ClassArquivo import *
 
 class ClassGerenciadorArquivo:
 
