@@ -1,11 +1,10 @@
 #encoding=utf-8
-from ClassProcesso import *
-from ClassGerenciadorMemoria import *
-from ClassArquivo import *
-from ClassGerenciadorArquivo import *
-from ClassGerenciadorRecurso import *
 import time
 from threading import *
+from ClassProcesso import *
+from ClassGerenciadorMemoria import *
+from ClassGerenciadorArquivo import *
+from ClassGerenciadorRecurso import *
 
 class ClassDespachante:
 
@@ -153,7 +152,7 @@ class ClassDespachante:
 
 		# Inserir os arquivos que estao no vetor_arquivos_disco (salvos no disco)
 		# nas posicoes do vetor posicoesDisco.
-		posicoesDisco = self.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
+		posicoesDisco = self.gerenteArquivo.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
 
 		print(posicoesDisco)
 
@@ -164,17 +163,6 @@ class ClassDespachante:
 		# vetor_arquivos_processos = Vetor de classeArquivo com os dados dos arquivos
 		#						que devem ser salvos no disco.
 		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
-
-
-	# Funcao criada para inserir os arquivos que ja estao no
-	# disco no momento de iniciacao do programa.
-	def inserirInicioDisco(self, vetor_arquivos_disco, posicoesDisco):
-
-		for arquivo in vetor_arquivos_disco:
-			for posicoesArquivo in range(arquivo.getBlocoInicial(), (arquivo.getBlocoInicial() + arquivo.getNumBlocos())):
-				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
-
-		return (posicoesDisco)
 
 
 	def runProcesses (self,processos, vetor_arquivos_processos,
@@ -254,15 +242,6 @@ class ClassDespachante:
 		print("\tmodems: " + str(processo.int_numReqModem))
 		print("\tdrives: " + str(processo.int_numReqDisco))
 		self.gerenteMemoria.atualizaOffsetMemoria(processo.int_blocosDeMem)
-
-
-	def imprimeFiles(self, vetorFiles):
-		if not vetorFiles:
-			print("Vetor de arquivos vazio")
-		else:
-			for files in vetorFiles:
-				files.imprimirValoresArquivo()
-				print("-----------------------------------------------")
 
 
 	def separaProcessos(self, vetor_processos):
