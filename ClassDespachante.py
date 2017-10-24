@@ -218,7 +218,7 @@ class ClassDespachante:
 		#self.gerenteProcessos.separaProcessos(self.gerenteProcessos.getProcessos())
 		#self.imprimeProcessos(vetor_processos_tempoReal)
 		#Comentei o runFiles pq nao preciso disso agora
-		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
+		#vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
 		self.gerenteFilas.setListaProcessos(lista_processos)
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
