@@ -2,6 +2,7 @@
 
 from ClassGerenciadorMemoria import *
 from ClassGerenciadorRecurso import *
+from ClassGerenciadorArquivo import *
 import time
 from threading import *
 
@@ -14,6 +15,8 @@ class ClassGerenciadorFilas:
         self.fila_processosusuario_prontos = []
         self.gerenteMemoria = ClassGerenciadorMemoria()
         self.gerenteRecursos = ClassGerenciadorRecurso()
+        self.gerenteArquivo = ClassGerenciadorArquivo()
+        self.lock = Lock()
 
     def setListaProcessos(self,vetor_processos):
         self.lista_processos = vetor_processos
@@ -23,7 +26,7 @@ class ClassGerenciadorFilas:
 
 
     #Novo RunProcesses
-    def runProcesses (self,processos):
+    def runProcesses(self,processos):
         lista_global = processos
         while (len(lista_global) > 0):
             processo = lista_global.pop(0)
@@ -42,21 +45,8 @@ class ClassGerenciadorFilas:
                         lista_global.append(processo)
                         AVANCAR = False
 
-
-    #def runProcesses (self,processos):
-        #for processo in processos:
-            #AVANCAR = True
-            #tempoAtual = time.time()
-            #while (AVANCAR):
-                #Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
-                #if (time.time() >= tempoAtual + processo.int_TempIniciacao):
-                    #t = Thread(target=self.executeProcess,args=(processo, vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco,))
-                    #t.start()
-                    #AVANCAR = False
-
     def executeProcess(self, processo):
         self.lock.acquire()
-        self.gerenteArquivo.manipulaArquivo(processo.getPID(), vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco)
         self.imprimeInicioDeExecucaoProcesso(processo)
         print("process " + str(processo.int_PID))
         print("P" + str(processo.int_PID) + " STARTED")
