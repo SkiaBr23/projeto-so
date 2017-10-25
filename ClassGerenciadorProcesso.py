@@ -42,21 +42,21 @@ class ClassGerenciadorProcesso:
         self.processos_RT = processos_tempoReal
         self.processos_usuario = processos_usuario
 
-    def runProcesses (self,processos, vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco):
+    def runProcesses (self,processos):
         for processo in processos:
             AVANCAR = True
             tempoAtual = time.time()
             while (AVANCAR):
                 #Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
                 if (time.time() >= tempoAtual + processo.int_TempIniciacao):
-                    t = Thread(target=self.executeProcess,args=(processo, vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco,))
+                    t = Thread(target=self.executeProcess,args=(processo,))
                     t.start()
                     AVANCAR = False
 
-    def executeProcess(self, processo, vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco):
+    def executeProcess(self, processo):
         if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo) and self.gerenteRecursos.verificaDisponibilidadeRecursos(processo)):
             self.lock.acquire()
-            self.gerenteArquivo.manipulaArquivo(processo.getPID(), vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco)
+            #self.gerenteArquivo.manipulaArquivo(processo.getPID(), vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco)
             self.imprimeInicioDeExecucaoProcesso(processo)
             print("process " + str(processo.int_PID))
             print("P" + str(processo.int_PID) + " STARTED")

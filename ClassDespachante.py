@@ -122,7 +122,7 @@ class ClassDespachante:
 					  # do disco.
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
-														(-1),	# BlocoInicial
+														(-2),	# BlocoInicial
 														(-1))	# TamanhoBlobo
 					vetor_arquivos_processos.append(arquivo_temporario)
 
@@ -137,7 +137,7 @@ class ClassDespachante:
 		# nas posicoes do vetor posicoesDisco.
 		posicoesDisco = self.gerenteArquivo.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
 
-		print(posicoesDisco)
+		#print(posicoesDisco)
 
 		# Retorna 3 vetores.
 		# vetor_arquivos_disco = Vetor de classeArquivo com os dados dos arquivos
@@ -216,8 +216,9 @@ class ClassDespachante:
 		self.gerenteProcessos.separaProcessos(self.gerenteProcessos.getProcessos())
 		#self.imprimeProcessos(vetor_processos_tempoReal)
 		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
-		self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,
-							vetor_arquivos_disco, posicoesDisco)
+		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT())
+
+		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco)
 
 
 		# vetor_arquivos_disco = arquivos ja em disco
