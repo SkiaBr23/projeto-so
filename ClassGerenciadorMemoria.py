@@ -1,8 +1,12 @@
 #encoding=utf-8
 
+import operator
+
 TAMANHO_TOTAL_MEMORIA = 1024
 TAMANHO_MEMORIA_PROCESSOS_RT = 64
 TAMANHO_MEMORIA_PROCESSOS_USUARIO = 960
+SUBTRACAO = operator.isub
+ADICAO = operator.iadd
 
 class ClassGerenciadorMemoria:
 
@@ -14,15 +18,13 @@ class ClassGerenciadorMemoria:
 	def verificaDisponibilidadeMemoria(self, processo):
 		if processo.getPrioridade == 0:
 			if processo.getBlocosMemoria() < self.getMemoriaLivreProcessosRT():
-				self.atualizaOffsetMemoria(processo.getBlocosMemoria())
-				self.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'diminui')
+				self.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),SUBTRACAO)
 				return True
 			else:
 				return False
 		else:
 			if processo.getBlocosMemoria() < self.getMemoriaLivreProcessosUsuario():
-				self.atualizaOffsetMemoria(processo.getBlocosMemoria())
-				self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),'diminui')
+				self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
 				return True
 			else:
 				return False
@@ -40,16 +42,10 @@ class ClassGerenciadorMemoria:
 		return self.int_memoria_processos_usuario
 
 	def atualizaMemoriaProcessosUsuario (self, valor, operacao):
-		if operacao == 'aumento':
-			self.int_memoria_processos_usuario += valor
-		else:
-			self.int_memoria_processos_usuario -= valor
+		return operacao(self.int_memoria_processos_usuario,valor)
 
 	def getMemoriaLivreProcessosRT (self):
 		return self.int_memoria_processos_rt
 
 	def atualizaMemoriaProcessosRT (self, valor, operacao):
-		if operacao == 'aumento':
-			self.int_memoria_processos_rt += valor
-		else:
-			self.int_memoria_processos_rt -= valor
+		return operacao(self.int_memoria_processos_rt,valor)

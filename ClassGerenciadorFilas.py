@@ -36,12 +36,12 @@ class ClassGerenciadorFilas:
             #print("Size lista_global: " + str(len(lista_global)))
             #print("Size processo top: " + str(len(self.getListaProcessos())))
             #print(tempoAtual)
-            #Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
+            #@TODO Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
             while time.time() <= (tempoAtual + processoTemp.getTempoInicializacao()):
+                pass
                 #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
                 # xarope de indent, se alguem souber so arrumar dps
                 # Resposta: usar o 'pass' para laços vazios
-                pass
             #print(time.time())
             processo = lista_global.pop(0)
             #print('Passou aqui EIN ------------------------------------------------')
@@ -55,10 +55,11 @@ class ClassGerenciadorFilas:
                 print('Processo ' + str(processo.getPID()) + ' descartado por falta de memória!')
 
         while self.isAnyThreadAlive():
+            pass
             #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
             # xarope de indent, se alguem souber so arrumar dps
             # Resposta: usar o 'pass' para laços vazios
-            pass
+
 
     @staticmethod
     def isAnyThreadAlive():
@@ -126,6 +127,7 @@ class ClassGerenciadorFilas:
 
     def executeProcess(self, processo):
         self.imprimeInicioDeExecucaoProcesso(processo)
+        self.gerenteMemoria.atualizaOffsetMemoria(processo.getBlocosMemoria())
         print("process " + str(processo.getPID()))
         print("P" + str(processo.getPID()) + " STARTED")
         contadorInstruc = 1
