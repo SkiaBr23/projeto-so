@@ -65,6 +65,7 @@ class ClassProcesso:
 		print("Num codigo disco = ", self.int_numReqDisco)
 
 
+	@staticmethod
 	def envelhecimento(fila_processos):
 
 		for processo in fila_processos:

@@ -1,11 +1,7 @@
 #encoding=utf-8
-import time
-from threading import *
 from ClassGerenciadorProcesso import *
-from ClassGerenciadorMemoria import *
-from ClassGerenciadorArquivo import *
-from ClassGerenciadorRecurso import *
 from ClassGerenciadorFilas import *
+from ClassGerenciadorArquivo import *
 
 class ClassDespachante:
 
@@ -43,7 +39,7 @@ class ClassDespachante:
 
 			arquivo.close()
 
-			return(linhasArquivo)
+			return linhasArquivo
 
 		except FileNotFoundError:
 			print("Arquivo contendo os processos não encontrado, encerrando")
@@ -64,7 +60,7 @@ class ClassDespachante:
 
 			arquivo.close()
 
-			return(linhasArquivo)
+			return linhasArquivo
 
 		except FileNotFoundError:
 			print("Arquivo contendo os processos não encontrado, encerrando")
@@ -83,11 +79,11 @@ class ClassDespachante:
 		for linhaTemp in linhasArquivoFiles:
 			#print(linhaTemp)
 
-			if(contador == 0): # estamos lendo a primeira linha
+			if contador == 0 : # estamos lendo a primeira linha
 				quantBlocosDisco = int(linhaTemp)
-			if(contador == 1):
+			if contador == 1 :
 				quantSegmenOcupadosDisco = int(linhaTemp)
-			if(contador > 1 and contador <= (quantSegmenOcupadosDisco + 1)):
+			if 1 < contador <= quantSegmenOcupadosDisco + 1:
 				# Nesse momento, criar os arquivos que ja estao salvos no
 				# disco. Criar uma classe arquivo!
 				# ATENCAO: Esses caras nao sao de nenhum processo
@@ -102,7 +98,7 @@ class ClassDespachante:
 
 				vetor_arquivos_disco.append(arquivo_temporario)
 
-			if(contador > (quantSegmenOcupadosDisco + 1)):
+			if contador > quantSegmenOcupadosDisco + 1:
 				# Nesse momento, colocamos os arquivos que sao criados
 				# por processos no vetor de arquivos.
 				# ATENCAO: Esses arquivos nao possuem int_Bloco_Inicial.
@@ -111,7 +107,7 @@ class ClassDespachante:
 				atri_Arquivo = linhaTemp.split(",")
 
 
-				if(atri_Arquivo[1] == "0"):
+				if atri_Arquivo[1] == "0":
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
 														(-1),	# Bloco inicial
@@ -120,7 +116,7 @@ class ClassDespachante:
 					vetor_arquivos_processos.append(arquivo_temporario)
 
 				else: # Nesse caso, temos os arquivos que devem ser deletados
-					  # do disco.
+					# do disco.
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
 														(-1),	# BlocoInicial
@@ -146,7 +142,7 @@ class ClassDespachante:
 		# posicoesDisco = Posicoes dos arquivos no disco.
 		# vetor_arquivos_processos = Vetor de classeArquivo com os dados dos arquivos
 		#						que devem ser salvos no disco.
-		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
+		return vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos
 
 
 	# Em executeProcess a gente verifica se o processo faz referencia a

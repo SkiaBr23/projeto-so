@@ -13,7 +13,7 @@ def main():
 	ClasseInformativo.limparTela()
 
 	try:
-		if (sys.argv[1] == "processes.txt" and sys.argv[2] == "files.txt"):
+		if sys.argv[1] == "processes.txt" and sys.argv[2] == "files.txt":
 			nomeArquivoProcesses = sys.argv[1]
 			nomeArquivoFiles = sys.argv[2]
 	except IndexError:

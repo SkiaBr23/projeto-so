@@ -29,7 +29,7 @@ class ClassGerenciadorFilas:
 
     def runProcesses(self, processos):
         lista_global = processos[:]
-        while (len(lista_global) > 0):
+        while len(lista_global) > 0:
             processoTemp = lista_global[0]
             #print('DEU O POP DO CARALHO ------------------------------------------------')
             tempoAtual = time.time()
@@ -37,14 +37,15 @@ class ClassGerenciadorFilas:
             #print("Size processo top: " + str(len(self.getListaProcessos())))
             #print(tempoAtual)
             #Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
-            while (time.time() <= (tempoAtual + processoTemp.getTempoInicializacao())):
+            while time.time() <= (tempoAtual + processoTemp.getTempoInicializacao()):
                 #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
                 # xarope de indent, se alguem souber so arrumar dps
-                naofazNada = True
+                # Resposta: usar o 'pass' para laços vazios
+                pass
             #print(time.time())
             processo = lista_global.pop(0)
             #print('Passou aqui EIN ------------------------------------------------')
-            if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo)):
+            if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo):
                 #print('IF BROADER')
                 self.lockMoveFilaGlobal.acquire()
                 self.moverParaFilaGlobal(processo)
@@ -53,12 +54,14 @@ class ClassGerenciadorFilas:
                 #print('ELSE BROADER')
                 print('Processo ' + str(processo.getPID()) + ' descartado por falta de memória!')
 
-        while (self.isAnyThreadAlive()):
+        while self.isAnyThreadAlive():
             #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
             # xarope de indent, se alguem souber so arrumar dps
-            teste = 2
+            # Resposta: usar o 'pass' para laços vazios
+            pass
 
-    def isAnyThreadAlive(self):
+    @staticmethod
+    def isAnyThreadAlive():
         threadsAlive = False
         for threadRT in THREADS_RT:
             if threadRT.isAlive():
@@ -72,11 +75,11 @@ class ClassGerenciadorFilas:
         #print('Size fila global: ' + str(len(self.FILA_GLOBAL)))
 
     def moverParaFilaRT(self):
-        while (len(self.lista_processos) > 0 or self.isAnyThreadAlive()):
+        while len(self.lista_processos) > 0 or self.isAnyThreadAlive():
             #print('Lista processos maior que zero: ' + str(len(self.lista_processos) > 0))
             #print('Any Thread Alive: ' + str(self.isAnyThreadAlive()))
             #print('Meu Piru fila')
-            if (len(self.FILA_GLOBAL) > 0):
+            if len(self.FILA_GLOBAL) > 0:
                 #print('Passou em moverParaFilaRT')
                 processo = self.FILA_GLOBAL.pop(0)
                 #print('processo obtido tmp de inicializacao: ' + str(processo.getTempoInicializacao()))
@@ -88,9 +91,9 @@ class ClassGerenciadorFilas:
 
     #Nova execute process para RTs
     def executarProcessoFilaRT(self):
-        while (len(self.lista_processos) > 0 or self.isAnyThreadAlive()):
+        while len(self.lista_processos) > 0 or self.isAnyThreadAlive():
             #print('Meu Piru run')
-            if (len(self.FILA_RT) > 0):
+            if len(self.FILA_RT) > 0:
                 #print('Passou em executarProcessoFilaRT')
                 self.lockStartProcess.acquire()
                 processo = self.FILA_RT.pop(0)
@@ -104,14 +107,14 @@ class ClassGerenciadorFilas:
     #Novo RunProcesses
     def runProcesses_OLD(self,processos):
         lista_global = processos
-        while (len(lista_global) > 0):
+        while len(lista_global) > 0:
             processo = lista_global.pop(0)
             AVANCAR = True
             tempoAtual = time.time()
-            while (AVANCAR):
+            while AVANCAR:
                 #Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
-                if ((time.time() >= tempoAtual + processo.int_TempIniciacao) or processo.getAposTempInicializacao() == 1):
-                    if (self.gerenteMemoria.verificaDisponibilidadeMemoria(processo) and self.gerenteRecursos.verificaDisponibilidadeRecursos(processo)):
+                if (time.time() >= tempoAtual + processo.int_TempIniciacao) or processo.getAposTempInicializacao() == 1:
+                    if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo) and self.gerenteRecursos.verificaDisponibilidadeRecursos(processo):
                         #Mover para uma fila de prontos, ao inves de executar, AJUSTAR
                         t = Thread(target=self.executeProcess,args=(processo,))
                         t.start()
@@ -128,8 +131,8 @@ class ClassGerenciadorFilas:
         contadorInstruc = 1
         contadorCPU = 0
         tempoAtual = time.time()
-        while (contadorCPU < processo.getTempoProcessador()):
-            if (time.time() > (tempoAtual+1)):
+        while contadorCPU < processo.getTempoProcessador():
+            if time.time() > (tempoAtual+1):
                 print("P" + str(processo.getPID()) + " instruction " + str(contadorInstruc))
                 contadorCPU += 1
                 contadorInstruc += 1
