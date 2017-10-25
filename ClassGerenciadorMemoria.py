@@ -14,14 +14,18 @@ class ClassGerenciadorMemoria:
 	def verificaDisponibilidadeMemoria(self, processo):
 		if (processo.getPrioridade == 0):
 			if (processo.getBlocosMemoria() < self.getMemoriaLivreProcessosRT()):
+				self.atualizaOffsetMemoria(processo.getBlocosMemoria())
+				self.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'diminui')
 				return True
 			else:
 				return False
 		else:
 			if (processo.getBlocosMemoria() < self.getMemoriaLivreProcessosUsuario()):
+				self.atualizaOffsetMemoria(processo.getBlocosMemoria())
+				self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),'diminui')
 				return True
 			else:
-				return True
+				return False
 
 	def atualizaOffsetMemoria(self, valor):
 		self.int_offset_memoria += valor

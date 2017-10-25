@@ -21,6 +21,12 @@ class ClassProcesso:
 	def getAposTempInicializacao(self):
 		return self.int_aposTempInicializacao
 
+	def getTempoProcessador(self):
+		return self.int_tempDeProcessador
+
+	def getTempoInicializacao(self):
+		return self.int_TempIniciacao
+
 	def setAposTempInicializacao(self):
 		self.int_aposTempInicializacao = 1
 
