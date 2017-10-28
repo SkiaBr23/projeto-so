@@ -215,10 +215,11 @@ class ClassDespachante:
 		#self.imprimeProcessos(vetor_processos_tempoReal)
 		#Comentei o runFiles pq nao preciso disso agora
 		#vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
+		main_thread = current_thread()
 		self.gerenteFilas.setListaProcessos(lista_processos)
-		moveFilaRT = Thread(target=self.gerenteFilas.moverParaFilaRT,args=())
+		moveFilaRT = Thread(target=self.gerenteFilas.moverParaFilaRT,name='MoveFilaRT',args=())
 		moveFilaRT.start()
-		runFilaRT = Thread(target=self.gerenteFilas.executarProcessoFilaRT,args=())
+		runFilaRT = Thread(target=self.gerenteFilas.executarProcessoFilaRT,name='RunFilaRT',args=())
 		runFilaRT.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)

@@ -16,16 +16,21 @@ class ClassGerenciadorMemoria:
 		self.int_offset_memoria = 0
 
 	def verificaDisponibilidadeMemoria(self, processo):
-		if processo.getPrioridade == 0:
-			if processo.getBlocosMemoria() < self.getMemoriaLivreProcessosRT():
-				self.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),SUBTRACAO)
-				return True
+		if processo.getPrioridade() == 0:
+			if processo.getBlocosMemoria() <= 64:
+				if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosRT():
+					return True
+				else:
+					return False
 			else:
 				return False
 		else:
-			if processo.getBlocosMemoria() < self.getMemoriaLivreProcessosUsuario():
-				self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
-				return True
+			if processo.getBlocosMemoria() <= 960:
+				if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosUsuario():
+					self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
+					return True
+				else:
+					return False
 			else:
 				return False
 
@@ -48,4 +53,7 @@ class ClassGerenciadorMemoria:
 		return self.int_memoria_processos_rt
 
 	def atualizaMemoriaProcessosRT (self, valor, operacao):
-		return operacao(self.int_memoria_processos_rt,valor)
+		if operacao == 'ADICAO':
+			self.int_memoria_processos_rt += valor
+		elif operacao == 'SUBTRACAO':
+			self.int_memoria_processos_rt -= valor

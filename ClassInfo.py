@@ -7,6 +7,7 @@ class ClassInfo:
     def informativoPrograma ():
         print ("Universidade de Brasília - 02/2017")
         print ("Projeto Final - Sistemas Operacionais")
+        print ("Aguardando inicialização de processos...")
 
     @staticmethod
     def limparTela ():

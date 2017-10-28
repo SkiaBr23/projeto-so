@@ -5,8 +5,7 @@ from ClassGerenciadorRecurso import *
 from ClassGerenciadorArquivo import *
 import time
 from threading import *
-
-THREADS_RT = []
+import operator
 
 class ClassGerenciadorFilas:
 
@@ -18,8 +17,8 @@ class ClassGerenciadorFilas:
         self.FILA_GLOBAL = []
         self.FILA_RT = []
         self.THREADS_RT = []
-        self.lockMoveFilaGlobal = Lock()
-        self.lockStartProcess = Lock()
+        self.lockMoveFilaGlobal = RLock()
+        self.lockStartProcess = RLock()
 
     def setListaProcessos(self,vetor_processos):
         self.lista_processos = vetor_processos
@@ -29,42 +28,49 @@ class ClassGerenciadorFilas:
 
     def runProcesses(self, processos):
         lista_global = processos[:]
+        tempoInicio = time.time()
         while len(lista_global) > 0:
             processoTemp = lista_global[0]
-            #print('DEU O POP DO CARALHO ------------------------------------------------')
-            tempoAtual = time.time()
+            #print('Iniciando while do tempo do processo ' + str(processoTemp.getPID()))
             #print("Size lista_global: " + str(len(lista_global)))
             #print("Size processo top: " + str(len(self.getListaProcessos())))
             #print(tempoAtual)
             #@TODO Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
-            while time.time() <= (tempoAtual + processoTemp.getTempoInicializacao()):
+            while time.time() <= (tempoInicio + processoTemp.getTempoInicializacao()):
                 pass
                 #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
                 # xarope de indent, se alguem souber so arrumar dps
                 # Resposta: usar o 'pass' para laços vazios
             #print(time.time())
             processo = lista_global.pop(0)
+            #print('Processo poped ' + str(processo.getPID()))
+            tempoAtual = time.time()
+            #print('Processo[' + str(processo.getPID()) + '] iniciado no tempo: ' + str(tempoAtual-tempoInicio))
             #print('Passou aqui EIN ------------------------------------------------')
             if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo):
                 #print('IF BROADER')
                 self.lockMoveFilaGlobal.acquire()
+                self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'SUBTRACAO')
+                #print('Valor de memoria livre: ' + str(self.gerenteMemoria.getMemoriaLivreProcessosRT()))
                 self.moverParaFilaGlobal(processo)
                 self.lockMoveFilaGlobal.release()
             else:
                 #print('ELSE BROADER')
                 print('Processo ' + str(processo.getPID()) + ' descartado por falta de memória!')
+                indice = self.getListaProcessos().index(processo)
+                self.getListaProcessos().pop(indice)
+        #print('oloco')
 
         while self.isAnyThreadAlive():
             pass
             #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
             # xarope de indent, se alguem souber so arrumar dps
             # Resposta: usar o 'pass' para laços vazios
+        #print('Saiu na loca')
 
-
-    @staticmethod
-    def isAnyThreadAlive():
+    def isAnyThreadAlive(self):
         threadsAlive = False
-        for threadRT in THREADS_RT:
+        for threadRT in self.THREADS_RT:
             if threadRT.isAlive():
                 threadsAlive = True
 
@@ -96,13 +102,13 @@ class ClassGerenciadorFilas:
             #print('Meu Piru run')
             if len(self.FILA_RT) > 0:
                 #print('Passou em executarProcessoFilaRT')
-                self.lockStartProcess.acquire()
                 processo = self.FILA_RT.pop(0)
-                t = Thread(target=self.executeProcess,args=(processo,))
+                t = Thread(target=self.executeProcess,name='ExecuteProcess'+str(processo.getPID()),args=(processo,))
+                #t.daemon = True
                 t.start()
                 self.THREADS_RT.append(t)
-        #print('Size lista fdp run: ' + str(len(self.getListaProcessos())))
-        #print('Alive run: ' + str(self.isAnyThreadAlive()))
+            #print('Size lista fdp run: ' + str(len(self.getListaProcessos())))
+            #print('Alive run: ' + str(self.isAnyThreadAlive()))
         #print('Saiu piru run')
 
     #Novo RunProcesses
@@ -119,6 +125,7 @@ class ClassGerenciadorFilas:
                         #Mover para uma fila de prontos, ao inves de executar, AJUSTAR
                         t = Thread(target=self.executeProcess,args=(processo,))
                         t.start()
+                        t.join()
                         AVANCAR = False
                     else:
                         processo.setAposTempInicializacao()
@@ -126,6 +133,7 @@ class ClassGerenciadorFilas:
                         AVANCAR = False
 
     def executeProcess(self, processo):
+        self.lockStartProcess.acquire()
         self.imprimeInicioDeExecucaoProcesso(processo)
         self.gerenteMemoria.atualizaOffsetMemoria(processo.getBlocosMemoria())
         print("process " + str(processo.getPID()))
@@ -140,13 +148,14 @@ class ClassGerenciadorFilas:
                 contadorInstruc += 1
                 tempoAtual = time.time()
         print("P" + str(processo.getPID()) + " return SIGINT")
+        self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'ADICAO')
         indice = self.getListaProcessos().index(processo)
         self.getListaProcessos().pop(indice)
         self.lockStartProcess.release()
 
     def imprimeInicioDeExecucaoProcesso(self, processo):
         print("dispatcher => ")
-        print("\tPID: " + str(processo.int_PID))
+        print("\tPID: " + str(processo.getPID()))
         print("\toffset: " + str(self.gerenteMemoria.getOffsetMemoria()))
         print("\tblocks: " + str(processo.int_blocosDeMem))
         print("\tpriority: " + str(processo.int_prioridade))
