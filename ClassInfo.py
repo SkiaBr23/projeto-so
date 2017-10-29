@@ -3,10 +3,12 @@ import os
 
 class ClassInfo:
 
-	def informativoPrograma (self):
-		print ("Universidade de Brasília - 02/2017")
-		print ("Projeto Final - Sistemas Operacionais")
+    @staticmethod
+    def informativoPrograma ():
+        print ("Universidade de Brasília - 02/2017")
+        print ("Projeto Final - Sistemas Operacionais")
+        print ("Aguardando inicialização de processos...")
 
-
-	def limparTela (self):
-		os.system('cls' if os.name=='nt' else 'clear')
+    @staticmethod
+    def limparTela ():
+        os.system('cls' if os.name=='nt' else 'clear')

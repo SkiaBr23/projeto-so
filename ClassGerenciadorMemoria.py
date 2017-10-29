@@ -1,8 +1,12 @@
 #encoding=utf-8
 
+import operator
+
 TAMANHO_TOTAL_MEMORIA = 1024
 TAMANHO_MEMORIA_PROCESSOS_RT = 64
 TAMANHO_MEMORIA_PROCESSOS_USUARIO = 960
+SUBTRACAO = operator.isub
+ADICAO = operator.iadd
 
 class ClassGerenciadorMemoria:
 
@@ -12,22 +16,29 @@ class ClassGerenciadorMemoria:
 		self.int_offset_memoria = 0
 
 	def verificaDisponibilidadeMemoria(self, processo):
-		if (processo.getPrioridade == 0):
-			if (processo.getBlocosMemoria() < self.getMemoriaLivreProcessosRT()):
-				return True
+		if processo.getPrioridade() == 0:
+			if processo.getBlocosMemoria() <= 64:
+				if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosRT():
+					return True
+				else:
+					return False
 			else:
 				return False
 		else:
-			if (processo.getBlocosMemoria() < self.getMemoriaLivreProcessosUsuario()):
-				return True
+			if processo.getBlocosMemoria() <= 960:
+				if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosUsuario():
+					self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
+					return True
+				else:
+					return False
 			else:
-				return True
+				return False
 
 	def atualizaOffsetMemoria(self, valor):
 		self.int_offset_memoria += valor
 
 	def getOffsetMemoria (self):
-		if (self.int_offset_memoria > 0):
+		if self.int_offset_memoria > 0:
 			return self.int_offset_memoria+1
 		else:
 			return self.int_offset_memoria
@@ -36,16 +47,13 @@ class ClassGerenciadorMemoria:
 		return self.int_memoria_processos_usuario
 
 	def atualizaMemoriaProcessosUsuario (self, valor, operacao):
-		if (operacao == 'aumento'):
-			self.int_memoria_processos_usuario += valor
-		else:
-			self.int_memoria_processos_usuario -= valor
+		return operacao(self.int_memoria_processos_usuario,valor)
 
 	def getMemoriaLivreProcessosRT (self):
 		return self.int_memoria_processos_rt
 
 	def atualizaMemoriaProcessosRT (self, valor, operacao):
-		if (operacao == 'aumento'):
+		if operacao == 'ADICAO':
 			self.int_memoria_processos_rt += valor
-		else:
+		elif operacao == 'SUBTRACAO':
 			self.int_memoria_processos_rt -= valor

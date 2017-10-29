@@ -4,7 +4,6 @@ from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassGerenciadorRecurso import *
 from ClassGerenciadorArquivo import *
-import time
 from threading import *
 import operator
 
@@ -30,7 +29,8 @@ class ClassGerenciadorProcesso:
             vetor_auxiliar.append(processo_temporario)
         return self.organizaViaTempInicializacao(vetor_auxiliar)
 
-    def organizaViaTempInicializacao(self, vetor_processos):
+    @staticmethod
+    def organizaViaTempInicializacao(vetor_processos):
         vetor_processos.sort(key = operator.attrgetter('int_TempIniciacao'))
         return vetor_processos
 
@@ -38,7 +38,7 @@ class ClassGerenciadorProcesso:
         processos_usuario = []
         processos_tempoReal = []
         for processo in vetor_processos:
-            if(processo.getPrioridade() == 0):
+            if processo.getPrioridade() == 0:
                 processos_tempoReal.append(processo)
             else:
                 processos_usuario.append(processo)
@@ -46,6 +46,7 @@ class ClassGerenciadorProcesso:
         self.processos_RT = processos_tempoReal
         self.processos_usuario = processos_usuario
 
+    # @TODO Quem seria esse processos_all?
     def getProcessos(self):
         return self.processos_all
 

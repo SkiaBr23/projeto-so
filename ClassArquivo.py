@@ -29,8 +29,6 @@ class ClassArquivo:
 	def getNomeArquivo (self):
 		return self.char_Nome_Arquivo
 
-
-
 	def imprimirValoresArquivo(self):
 		
 		print("ID do processo: ", self.int_ID_Processo)
