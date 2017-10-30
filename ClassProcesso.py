@@ -17,6 +17,16 @@ class ClassProcesso:
 		self.int_numReqModem = int_numReqModem
 		self.int_numReqDisco = int_numReqDisco
 		self.int_aposTempInicializacao = 0
+		self.int_tokenCPU = False
+
+	def activateTokenCPU(self):
+		self.int_tokenCPU = True
+
+	def deactivateTokenCPU(self):
+		self.int_tokenCPU = False
+
+	def getTokenCPU(self):
+		return self.int_tokenCPU
 
 	def getAposTempInicializacao(self):
 		return self.int_aposTempInicializacao
