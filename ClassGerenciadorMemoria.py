@@ -17,22 +17,28 @@ class ClassGerenciadorMemoria:
 
 	def verificaDisponibilidadeMemoria(self, processo):
 		if processo.getPrioridade() == 0:
-			if processo.getBlocosMemoria() <= 64:
-				if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosRT():
-					return True
-				else:
-					return False
+			if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosRT():
+				return True
 			else:
 				return False
 		else:
-			if processo.getBlocosMemoria() <= 960:
-				if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosUsuario():
-					self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
-					return True
-				else:
-					return False
+			if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosUsuario():
+				self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
+				return True
 			else:
 				return False
+
+	def verificaRequisicaoMemoria(self, processo):
+		if processo.getPrioridade() == 0:
+			if processo.getBlocosMemoria() > 64:
+				return False
+			else:
+				return True
+		else:
+			if processo.getBlocosMemoria() > 960:
+				return False
+			else:
+				return True
 
 	def atualizaOffsetMemoria(self, valor):
 		self.int_offset_memoria += valor

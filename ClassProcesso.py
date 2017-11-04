@@ -51,6 +51,8 @@ class ClassProcesso:
 	def getPID (self):
 		return self.int_PID
 
+	def setPID(self,valor):
+		self.int_PID = valor
 
 	def imprimirValoresProcesso(self):
 

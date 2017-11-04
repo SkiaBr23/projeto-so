@@ -36,7 +36,7 @@ class ClassGerenciadorFilas:
             #print("Size processo top: " + str(len(self.getListaProcessos())))
             #print(tempoAtual)
             #@TODO Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
-            while time.time() <= (tempoInicio + processoTemp.getTempoInicializacao()):
+            while time.time() <= (tempoInicio + processoTemp.getTempoInicializacao()) and processoTemp.getAposTempInicializacao() == 0:
                 pass
                 #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
                 # xarope de indent, se alguem souber so arrumar dps
@@ -44,18 +44,23 @@ class ClassGerenciadorFilas:
             #print(time.time())
             processo = lista_global.pop(0)
             #print('Processo poped ' + str(processo.getPID()))
-            tempoAtual = time.time()
+            #tempoAtual = time.time()
             #print('Processo[' + str(processo.getPID()) + '] iniciado no tempo: ' + str(tempoAtual-tempoInicio))
             #print('Passou aqui EIN ------------------------------------------------')
-            if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo):
-                #print('IF BROADER')
-                self.lockMoveFilaGlobal.acquire()
-                self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'SUBTRACAO')
-                #print('Valor de memoria livre: ' + str(self.gerenteMemoria.getMemoriaLivreProcessosRT()))
-                self.moverParaFilaGlobal(processo)
-                self.lockMoveFilaGlobal.release()
+            if self.gerenteMemoria.verificaRequisicaoMemoria(processo):
+                processo.setAposTempInicializacao()
+                if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo):
+                    #print('IF BROADER')
+                    self.lockMoveFilaGlobal.acquire()
+                    self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'SUBTRACAO')
+                    #print('Valor de memoria livre: ' + str(self.gerenteMemoria.getMemoriaLivreProcessosRT()))
+                    self.moverParaFilaGlobal(processo)
+                    self.lockMoveFilaGlobal.release()
+                else:
+                    #print('ELSE BROADER')
+                    #print('Processo' + str(processo.getPID()) + ' acoplado ao fim da fila!')
+                    lista_global.append(processo)
             else:
-                #print('ELSE BROADER')
                 print('Processo ' + str(processo.getPID()) + ' descartado por falta de memória!')
                 indice = self.getListaProcessos().index(processo)
                 self.getListaProcessos().pop(indice)
