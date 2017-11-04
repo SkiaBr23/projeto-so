@@ -73,6 +73,7 @@ class ClassProcesso:
 		print("Requisicao do Scanner = ", self.int_numReqScanner)
 		print("Requisicao do Modem = ", self.int_numReqModem)
 		print("Num codigo disco = ", self.int_numReqDisco)
+		print("TokenCPU: ", self.int_tokenCPU)
 
 
 	@staticmethod

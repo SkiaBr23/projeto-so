@@ -220,6 +220,11 @@ class ClassDespachante:
 		moveFilaRT.start()
 		runFilaRT = Thread(target=self.gerenteFilas.executarProcessoFilaRT,name='RunFilaRT',args=())
 		runFilaRT.start()
+		#INICIAR THREADS AQUI - USUARIO
+		moveFilaUsuario = Thread(target=self.gerenteFilas.moverParaFilaUsuario,name='MoveFilaUsuario',args=())
+		moveFilaUsuario.start()
+		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
+		runFilaUsuario.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
 
