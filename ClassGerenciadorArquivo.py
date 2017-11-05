@@ -46,10 +46,6 @@ class ClassGerenciadorArquivo:
 
 	# Funcao para inserir um arquivo no disco. Essa funcao eh diferente da inserirInicioDisco
 	# pois nesse caso essa funcao realiza uma verificacao no disco.
-	# verifica se o arquivo ja foi inserido e verifica se possui espaco. ---------------------------> DONE
-	# Quando inserir um arquivo no disco, devemos remover esse mesmo 
-	# arquivo em vetor_arquivos_processos.----------------------------------------------------------> NOT DONE
-	#
 	def inserirArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
 		
 		flagInserir = 0
