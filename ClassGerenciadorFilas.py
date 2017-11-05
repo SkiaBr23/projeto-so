@@ -239,6 +239,23 @@ class ClassGerenciadorFilas:
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
+                        #Contadores ainda nao bateram, nao ha mais processo 1 esperando,
+                        #porem tem de dois ou 3 esperando
+                        elif not boolean and contadorCPU == processo.getTempoProcessador():
+                            boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
+                            if boolean:
+                                #print("Caiu aqui 1")
+                                if (contadorCPU != processo.getTempoProcessador()):
+                                    processo.deactivateTokenCPU()
+                                self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                                continue
+                            boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
+                            if boolean:
+                                #print("Caiu aqui 1")
+                                if (contadorCPU != processo.getTempoProcessador()):
+                                    processo.deactivateTokenCPU()
+                                self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                                continue
                     if processo.getPrioridade() == 2:
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
                             #Verifica processos de prioridade 3 ou mais (menos prioritarios)
@@ -265,7 +282,16 @@ class ClassGerenciadorFilas:
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
-                    if processo.getPrioridade() > 2:
+                        #Adicionado este, pq verifica se tem alguem de prioridade 3 esperando,
+                        #caso nao haja mais prioridade 1 ou 2 e o contador nao esteja no valor correto
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
+                        if boolean:
+                            #print("Caiu aqui 1")
+                            if (contadorCPU != processo.getTempoProcessador()):
+                                processo.deactivateTokenCPU()
+                            self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
+                    if processo.getPrioridade() == 3:
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 7")
@@ -320,7 +346,7 @@ class ClassGerenciadorFilas:
 
     def activateFirstUserProcess(self):
         for processo in self.USER_PROCESSES_RUNNING:
-            if processo.getPrioridade() > 0:
+            if processo.getPrioridade() > 0 and processo.getTokenCPU() == False:
                 processo.activateTokenCPU()
                 return
 
