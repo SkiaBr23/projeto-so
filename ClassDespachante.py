@@ -134,7 +134,15 @@ class ClassDespachante:
 		# nas posicoes do vetor posicoesDisco.
 		posicoesDisco = self.gerenteArquivo.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
 
-		print(posicoesDisco)
+		print("\nSistema de arquivos =>\n")
+		#print(posicoesDisco)
+
+		print ("Mapa de ocupação do disco:\n")
+		print( "[|",end="")
+		for posicao in posicoesDisco:
+			print("  " + posicao + "  |",end="")
+
+		print("]")
 
 		# Retorna 3 vetores.
 		# vetor_arquivos_disco = Vetor de classeArquivo com os dados dos arquivos
@@ -226,6 +234,8 @@ class ClassDespachante:
 		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
 		runFilaUsuario.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
+
+		self.runFiles(linhasArquivoFiles)
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
 
 

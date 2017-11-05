@@ -149,7 +149,7 @@ class ClassGerenciadorFilas:
                 processo = self.FILA_RT.pop(0)
                 processo.activateTokenCPU()
                 self.RT_STARTED = True
-                t = Thread(target=self.ExecuteProcessRT,name='ExecuteProcessRT'+str(processo.getPID()),args=(processo,))
+                t = Thread(target=self.executeProcessRT,name='ExecuteProcessRT'+str(processo.getPID()),args=(processo,))
                 #t.daemon = True
                 t.start()
                 self.THREADS_RT.append(t)
