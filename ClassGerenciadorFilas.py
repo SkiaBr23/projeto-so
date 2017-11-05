@@ -35,6 +35,7 @@ class ClassGerenciadorFilas:
     def runProcesses(self, processos):
         lista_global = processos[:]
         tempoInicio = time.time()
+        AVANCAR = False
         while len(lista_global) > 0:
             processoTemp = lista_global[0]
             #print('Iniciando while do tempo do processo ' + str(processoTemp.getPID()))
@@ -43,11 +44,17 @@ class ClassGerenciadorFilas:
             #print(tempoAtual)
             #@TODO Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
             while time.time() <= (tempoInicio + processoTemp.getTempoInicializacao()) and processoTemp.getAposTempInicializacao() == 0:
-                pass
+                AVANCAR = True
+                break
                 #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
                 # xarope de indent, se alguem souber so arrumar dps
                 # Resposta: usar o 'pass' para laços vazios
             #print(time.time())
+            if AVANCAR:
+                AVANCAR = False
+                processo = lista_global.pop(0)
+                lista_global.append(processo)
+                continue
             processo = lista_global.pop(0)
             #print('Processo poped ' + str(processo.getPID()))
             #tempoAtual = time.time()
