@@ -205,60 +205,77 @@ class ClassGerenciadorFilas:
                     self.CONTADOR_RUN_USUARIO += 1
                     self.lockStartProcess.release()
                     if processo.getPrioridade() == 1:
-                        if self.CONTADOR_RUN_USUARIO%2 == 0:
+                        if self.CONTADOR_RUN_USUARIO%3 == 0:
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                             if boolean:
                                 #print("Caiu aqui 1")
-                                processo.deactivateTokenCPU()
+                                if (contadorCPU != processo.getTempoProcessador()):
+                                    processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                                continue
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
                                 #print("Caiu aqui 2")
-                                processo.deactivateTokenCPU()
+                                if (contadorCPU != processo.getTempoProcessador()):
+                                    processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                                continue
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 3")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
                     if processo.getPrioridade() == 2:
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
                             #Verifica processos de prioridade 3 ou mais (menos prioritarios)
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
                                 #print("Caiu aqui 4")
-                                processo.deactivateTokenCPU()
+                                if (contadorCPU != processo.getTempoProcessador()):
+                                    processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                                continue
                         #Verifica se tem algum de nivel 1 esperando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 5")
-                            processo.deactivateTokenCPU()
+                            if (contadorCPU != processo.getTempoProcessador()):
+                                processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
                         #Verifica se tem algum de nivel 2 esperando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
                             #print("Caiu aqui 6")
-                            processo.deactivateTokenCPU()
+                            if (contadorCPU != processo.getTempoProcessador()):
+                                processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
                     if processo.getPrioridade() > 2:
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 7")
-                            processo.deactivateTokenCPU()
+                            if (contadorCPU != processo.getTempoProcessador()):
+                                processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
                             #print("Caiu aqui 8")
-                            processo.deactivateTokenCPU()
+                            if (contadorCPU != processo.getTempoProcessador()):
+                                processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                         if boolean:
                             #print("Caiu aqui 9")
-                            processo.deactivateTokenCPU()
+                            if (contadorCPU != processo.getTempoProcessador()):
+                                processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
+                            continue
 
         print("P" + str(processo.getPID()) + " return SIGINT")
         self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'ADICAO')
@@ -266,6 +283,7 @@ class ClassGerenciadorFilas:
         self.getListaProcessos().pop(indice)
 
     def executeProcessRT(self, processo):
+        self.lockStartProcess.acquire()
         self.imprimeInicioDeExecucaoProcesso(processo)
         self.gerenteMemoria.atualizaOffsetMemoria(processo.getBlocosMemoria())
         print("process " + str(processo.getPID()))
@@ -273,7 +291,6 @@ class ClassGerenciadorFilas:
         contadorInstruc = 1
         contadorCPU = 0
         tempoAtual = time.time()
-        self.lockStartProcess.acquire()
         while contadorCPU < processo.getTempoProcessador():
             if processo.getTokenCPU():
                 if time.time() > (tempoAtual+1):

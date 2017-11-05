@@ -58,6 +58,9 @@ class ClassProcesso:
 	def getPrioridade (self):
 		return self.int_prioridade
 
+	def setPrioridade (self, valor):
+		self.int_prioridade = valor
+
 	def getPID (self):
 		return self.int_PID
 
