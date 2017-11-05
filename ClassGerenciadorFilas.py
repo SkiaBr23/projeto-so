@@ -171,36 +171,14 @@ class ClassGerenciadorFilas:
                 rtProcess = True
         return rtProcess
 
-    def hasProcessLevelTwoWaiting(self, processo):
+    def hasProcessWaiting(self, processo, prioridade):
         indice = self.USER_PROCESSES_RUNNING.index(processo)
         if indice < (len(self.USER_PROCESSES_RUNNING)-1):
             for i in range(indice+1, len(self.USER_PROCESSES_RUNNING)):
-                if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() == 2:
+                if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() == prioridade:
                     return (True,i)
         for i in range(0,indice):
-            if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() == 2:
-                return (True,i)
-        return (False,None)
-
-    def hasProcessLevelThreeWaiting(self, processo):
-        indice = self.USER_PROCESSES_RUNNING.index(processo)
-        if indice < (len(self.USER_PROCESSES_RUNNING)-1):
-            for i in range(indice+1, len(self.USER_PROCESSES_RUNNING)):
-                if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() >= 3:
-                    return (True,i)
-        for i in range(0,indice):
-            if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() >= 3:
-                return (True,i)
-        return (False,None)
-
-    def hasProcessLevelOneWaiting(self, processo):
-        indice = self.USER_PROCESSES_RUNNING.index(processo)
-        if indice < (len(self.USER_PROCESSES_RUNNING)-1):
-            for i in range(indice+1, len(self.USER_PROCESSES_RUNNING)):
-                if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() == 1:
-                    return (True,i)
-        for i in range(0,indice):
-            if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() == 1:
+            if not self.USER_PROCESSES_RUNNING[i].getTokenCPU() and self.USER_PROCESSES_RUNNING[i].getPrioridade() == prioridade:
                 return (True,i)
         return (False,None)
 
@@ -228,18 +206,18 @@ class ClassGerenciadorFilas:
                     self.lockStartProcess.release()
                     if processo.getPrioridade() == 1:
                         if self.CONTADOR_RUN_USUARIO%2 == 0:
-                            boolean, indiceProcesso = self.hasProcessLevelTwoWaiting(processo)
+                            boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                             if boolean:
                                 #print("Caiu aqui 1")
                                 processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
-                            boolean, indiceProcesso = self.hasProcessLevelThreeWaiting(processo)
+                            boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
                                 #print("Caiu aqui 2")
                                 processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
-                        boolean, indiceProcesso = self.hasProcessLevelOneWaiting(processo)
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 3")
                             if (contadorCPU != processo.getTempoProcessador()):
@@ -248,35 +226,35 @@ class ClassGerenciadorFilas:
                     if processo.getPrioridade() == 2:
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
                             #Verifica processos de prioridade 3 ou mais (menos prioritarios)
-                            boolean, indiceProcesso = self.hasProcessLevelThreeWaiting(processo)
+                            boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
                                 #print("Caiu aqui 4")
                                 processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                         #Verifica se tem algum de nivel 1 esperando
-                        boolean, indiceProcesso = self.hasProcessLevelOneWaiting(processo)
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 5")
                             processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                         #Verifica se tem algum de nivel 2 esperando
-                        boolean, indiceProcesso = self.hasProcessLevelTwoWaiting(processo)
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
                             #print("Caiu aqui 6")
                             processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                     if processo.getPrioridade() > 2:
-                        boolean, indiceProcesso = self.hasProcessLevelOneWaiting(processo)
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
                             #print("Caiu aqui 7")
                             processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
-                        boolean, indiceProcesso = self.hasProcessLevelTwoWaiting(processo)
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
                             #print("Caiu aqui 8")
                             processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
-                        boolean, indiceProcesso = self.hasProcessLevelThreeWaiting(processo)
+                        boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                         if boolean:
                             #print("Caiu aqui 9")
                             processo.deactivateTokenCPU()
