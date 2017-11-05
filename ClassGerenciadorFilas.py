@@ -154,8 +154,8 @@ class ClassGerenciadorFilas:
             if len(self.FILA_RT) > 0:
                 #print('Passou em executarProcessoFilaRT')
                 processo = self.FILA_RT.pop(0)
+                self.deactivateUserProcesses()
                 processo.activateTokenCPU()
-                self.RT_STARTED = True
                 t = Thread(target=self.executeProcessRT,name='ExecuteProcessRT'+str(processo.getPID()),args=(processo,))
                 #t.daemon = True
                 t.start()
@@ -163,6 +163,10 @@ class ClassGerenciadorFilas:
             #print('Size lista fdp run: ' + str(len(self.getListaProcessos())))
             #print('Alive run: ' + str(self.isAnyThreadAlive()))
         #print('Saiu piru run')
+
+    def deactivateUserProcesses(self):
+        for processo in self.USER_PROCESSES_RUNNING:
+            processo.deactivateTokenCPU()
 
     def isUsuarioProcess (self):
         usuarioProcess = False
@@ -290,6 +294,7 @@ class ClassGerenciadorFilas:
         self.getListaProcessos().pop(indice)
 
     def executeProcessRT(self, processo):
+        self.RT_STARTED = True
         self.lockStartProcess.acquire()
         self.imprimeInicioDeExecucaoProcesso(processo)
         self.gerenteMemoria.atualizaOffsetMemoria(processo.getBlocosMemoria())
@@ -311,6 +316,13 @@ class ClassGerenciadorFilas:
         self.getListaProcessos().pop(indice)
         self.RT_STARTED = 0
         self.lockStartProcess.release()
+        self.activateFirstUserProcess()
+
+    def activateFirstUserProcess(self):
+        for processo in self.USER_PROCESSES_RUNNING:
+            if processo.getPrioridade() > 0:
+                processo.activateTokenCPU()
+                return
 
     #BACKUP DE EXECUCAO
     #def executeProcess(self, processo):
