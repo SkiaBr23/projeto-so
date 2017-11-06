@@ -64,32 +64,41 @@ class ClassGerenciadorFilas:
                 processo.setAposTempInicializacao()
                 if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo):
                     #print('IF BROADER')
-                    self.lockMoveFilaGlobal.acquire()
                     if processo.getPrioridade() == 0:
+                        self.lockMoveFilaGlobal.acquire()
                         self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'SUBTRACAO')
-                    else:
+                        self.moverParaFilaGlobal(processo)
+                        self.lockMoveFilaGlobal.release()   
+
+                    elif self.gerenteRecursos.verificaDisponibilidadeRecursos(processo):
+                        self.lockMoveFilaGlobal.acquire()
                         self.gerenteMemoria.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),'SUBTRACAO')
-                    #print('Valor de memoria livre: ' + str(self.gerenteMemoria.getMemoriaLivreProcessosRT()))
-                    self.moverParaFilaGlobal(processo)
-                    self.lockMoveFilaGlobal.release()
+                        print('mandou pro paredao')
+                        self.moverParaFilaGlobal(processo)
+                        self.lockMoveFilaGlobal.release()
+
+                    else:
+                        #self.descartaProcesso(processo,'recurso requisitado não disponível')
+                        print("P" + str(processo.getPID()) + " = recurso requisitado nao disponivel")
+                        lista_global.append(processo)
+
                 else:
                     #print('ELSE BROADER')
                     lista_global.append(processo)
 
             else:
-                print('Processo ' + str(processo.getPID()) + ' descartado por falta de memória!')
-                indice = self.getListaProcessos().index(processo)
-                self.getListaProcessos().pop(indice)
-        #print('oloco')
+                self.descartaProcesso(processo,'falta de memória')
 
         while self.isAnyThreadRTAlive():
             pass
-            #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
-            # xarope de indent, se alguem souber so arrumar dps
-            # Resposta: usar o 'pass' para laços vazios
-        #print('Saiu na loca')
+
         while self.isAnyThreadUsuarioAlive():
             pass
+
+    def descartaProcesso(self,processo,mensagem):
+        print('Processo ' + str(processo.getPID()) + ' descartado por: '+ mensagem + '!')
+        indice = self.getListaProcessos().index(processo)
+        self.getListaProcessos().pop(indice)
 
     def isAnyThreadRTAlive(self):
         threadsAlive = False
@@ -315,6 +324,7 @@ class ClassGerenciadorFilas:
                             continue
 
         print("P" + str(processo.getPID()) + " return SIGINT")
+        self.gerenteRecursos.liberaRecursos(processo)
         self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'ADICAO')
         indice = self.getListaProcessos().index(processo)
         self.getListaProcessos().pop(indice)
