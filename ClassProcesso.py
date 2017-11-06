@@ -18,6 +18,13 @@ class ClassProcesso:
 		self.int_numReqDisco = int_numReqDisco
 		self.int_aposTempInicializacao = 0
 		self.int_tokenCPU = False
+		self.int_esperaRecurso = False
+
+	def getEsperaRecurso(self):
+		return self.int_esperaRecurso
+
+	def setEsperaRecurso(self, valor):
+		self.int_esperaRecurso = valor
 
 	def activateTokenCPU(self):
 		self.int_tokenCPU = True

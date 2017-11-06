@@ -12,13 +12,12 @@ class ClassGerenciadorRecurso:
 
         if processo.getRequisicaoScanner() == 1 and self.scannerLivre == 0:
             self.scannerLivre = 1;
-        print('recursos liberados')
         if processo.getRequisicaoModem() == 1 and self.modemLivre == 0:
             self.modemLivre = 1;
         if processo.getRequisicaoImpressora() != 0 and processo.getRequisicaoImpressora() not in self.impressorasLivres:
-            self.impressorasLivres.add(processo.getRequisicaoImpressora())
+            self.impressorasLivres.append(processo.getRequisicaoImpressora())
         if processo.getRequisicaoDisco() != 0 and processo.getRequisicaoDisco() not in self.dispSataLivres:
-            self.dispSataLivres.add(processo.getRequisicaoDisco())
+            self.dispSataLivres.append(processo.getRequisicaoDisco())
 
 
 

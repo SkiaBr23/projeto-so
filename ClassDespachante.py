@@ -226,7 +226,6 @@ class ClassDespachante:
 		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
 		runFilaUsuario.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
-
 		
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
 

@@ -73,26 +73,25 @@ class ClassGerenciadorFilas:
                     elif self.gerenteRecursos.verificaDisponibilidadeRecursos(processo):
                         self.lockMoveFilaGlobal.acquire()
                         self.gerenteMemoria.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),'SUBTRACAO')
-                        print('mandou pro paredao')
                         self.moverParaFilaGlobal(processo)
                         self.lockMoveFilaGlobal.release()
 
                     else:
-                        #self.descartaProcesso(processo,'recurso requisitado não disponível')
-                        print("P" + str(processo.getPID()) + " = recurso requisitado nao disponivel")
+                        if not processo.getEsperaRecurso():
+                            processo.setEsperaRecurso(True);
+                            print('Processo ' + str(processo.getPID()) + ' em espera por falta de recurso')
                         lista_global.append(processo)
 
                 else:
-                    #print('ELSE BROADER')
                     lista_global.append(processo)
 
             else:
                 self.descartaProcesso(processo,'falta de memória')
 
-        while self.isAnyThreadRTAlive():
+        while self.isAnyThreadRTAlive() or len(self.getListaProcessos()) > 0:
             pass
 
-        while self.isAnyThreadUsuarioAlive():
+        while self.isAnyThreadUsuarioAlive() or len(self.getListaProcessos()) > 0:
             pass
 
     def descartaProcesso(self,processo,mensagem):
@@ -147,9 +146,9 @@ class ClassGerenciadorFilas:
         while len(self.lista_processos) > 0 or self.isAnyThreadUsuarioAlive():
             if len(self.FILA_USUARIO) > 0:
                 processo = self.FILA_USUARIO.pop(0)
-                if self.USER_STARTED == 0:
+                if not self.isAnyThreadUsuarioAlive():
                     processo.activateTokenCPU()
-                    self.USER_STARTED = 1
+                    
                 self.USER_PROCESSES_RUNNING.append(processo)
                 indice = self.USER_PROCESSES_RUNNING.index(processo)
                 t = Thread(target=self.executeProcessUsuario,name='ExecuteProcessUsuario'+str(processo.getPID()),args=(self.USER_PROCESSES_RUNNING[indice],))
