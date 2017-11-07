@@ -1,5 +1,6 @@
 #encoding=utf-8
 from ClassArquivo import *
+from ClassProcesso import *
 
 class ClassGerenciadorArquivo:
 
@@ -15,33 +16,60 @@ class ClassGerenciadorArquivo:
 		
 		return (posicoesDisco)
 	
+
+
+	def verificaProcessoExiste(self, arquivo, lista_processos):
+
+		idExiste = 0
+
+		idProcessoNoArquivo = arquivo.getIDProcesso()
+
+		for processo in lista_processos:
+			idProcesso = processo.getPID()
+			print(idProcessoNoArquivo, " - ", idProcesso)
+			if(idProcessoNoArquivo == idProcesso):
+				idExiste = 1 # Existe processo 
+
+		return idExiste
+
+
 	# Nessa funcao, buscamos o primeiro arquivo no array(que foram inseridos na ordem do arquivo)
 	# que esteja relacionado ao processo em execucao. Nesse caso, verificamos se eh um processo de
 	# criacao ou remocao de arquivo.
 	def executeArquivos(self, vetor_arquivos_processos,
-						vetor_arquivos_disco, posicoesDisco):
+						vetor_arquivos_disco, posicoesDisco, lista_processos):
 
 		print("")
 		print("Sistema de arquivos =>\n")
 
 		contador = 0
+		idExiste = 0
 
 		for arquivo in vetor_arquivos_processos:
 			#print("------------------------------------------")
 			#arquivo.imprimirValoresArquivo()
 			#print("------------------------------------------")
 
-			if(arquivo.getBlocoInicial() == (-1)):
-				#print("Instrucao para criacao de arquivo...")
+			idExiste = self.verificaProcessoExiste(arquivo, lista_processos)
 
-				self.inserirArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
+			if(idExiste == 1):
+
+				if(arquivo.getBlocoInicial() == (-1)):
+					#print("Instrucao para criacao de arquivo...")
+
+					self.inserirArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
+
+				else:
+					#print("Instrucao para deletar arquivo...")
+
+					self.deletarArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
 
 			else:
-				#print("Instrucao para deletar arquivo...")
-
-				self.deletarArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
+				print("Operacao ", contador, " => Falha\n")
+				print("Nao existe o processo.")
 
 			self.imprimeMapaPosicoesDisco(posicoesDisco)
+			contador +=1
 			print("")
 
 	# Funcao para inserir um arquivo no disco. Essa funcao eh diferente da inserirInicioDisco

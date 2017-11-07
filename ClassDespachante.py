@@ -216,6 +216,8 @@ class ClassDespachante:
 
 		lista_processos = self.gerenteProcessos.montaListaProcesses(linhasArquivoProcesses)
 
+		todos_os_processos = lista_processos
+
 		lista_processos = self.removeProcessosTempoInicializacaoIgual(lista_processos)
 
 		lista_processos = self.updatePIDs(lista_processos)
@@ -258,7 +260,7 @@ class ClassDespachante:
 		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT())
 
-		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco)
+		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco, todos_os_processos)
 
 
 
