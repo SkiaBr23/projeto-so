@@ -8,6 +8,19 @@ class ClassGerenciadorRecurso:
         self.modemLivre = 1
         self.dispSataLivres = [1,2]
 
+    def liberaRecursos(self,processo):
+
+        if processo.getRequisicaoScanner() == 1 and self.scannerLivre == 0:
+            self.scannerLivre = 1;
+        if processo.getRequisicaoModem() == 1 and self.modemLivre == 0:
+            self.modemLivre = 1;
+        if processo.getRequisicaoImpressora() != 0 and processo.getRequisicaoImpressora() not in self.impressorasLivres:
+            self.impressorasLivres.append(processo.getRequisicaoImpressora())
+        if processo.getRequisicaoDisco() != 0 and processo.getRequisicaoDisco() not in self.dispSataLivres:
+            self.dispSataLivres.append(processo.getRequisicaoDisco())
+
+
+
     def verificaDisponibilidadeRecursos(self, processo):
         #Verificação de scanner
         if self.verificaDisponibilidadeScanner(processo):

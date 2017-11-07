@@ -66,6 +66,7 @@ class ClassDespachante:
 			print("Arquivo contendo os processos não encontrado, encerrando")
 			exit()
 
+
 	def runFiles(self, linhasArquivoFiles):
 
 		contador = 0
@@ -74,16 +75,14 @@ class ClassDespachante:
 		vetor_arquivos_disco = []
 		vetor_arquivos_processos = []
 
-
-
 		for linhaTemp in linhasArquivoFiles:
 			#print(linhaTemp)
 
-			if contador == 0 : # estamos lendo a primeira linha
+			if(contador == 0): # estamos lendo a primeira linha
 				quantBlocosDisco = int(linhaTemp)
-			if contador == 1 :
+			if(contador == 1):
 				quantSegmenOcupadosDisco = int(linhaTemp)
-			if 1 < contador <= quantSegmenOcupadosDisco + 1:
+			if(contador > 1 and contador <= (quantSegmenOcupadosDisco + 1)):
 				# Nesse momento, criar os arquivos que ja estao salvos no
 				# disco. Criar uma classe arquivo!
 				# ATENCAO: Esses caras nao sao de nenhum processo
@@ -98,7 +97,7 @@ class ClassDespachante:
 
 				vetor_arquivos_disco.append(arquivo_temporario)
 
-			if contador > quantSegmenOcupadosDisco + 1:
+			if(contador > (quantSegmenOcupadosDisco + 1)):
 				# Nesse momento, colocamos os arquivos que sao criados
 				# por processos no vetor de arquivos.
 				# ATENCAO: Esses arquivos nao possuem int_Bloco_Inicial.
@@ -107,7 +106,7 @@ class ClassDespachante:
 				atri_Arquivo = linhaTemp.split(",")
 
 
-				if atri_Arquivo[1] == "0":
+				if(atri_Arquivo[1] == "0"):
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
 														(-1),	# Bloco inicial
@@ -116,10 +115,10 @@ class ClassDespachante:
 					vetor_arquivos_processos.append(arquivo_temporario)
 
 				else: # Nesse caso, temos os arquivos que devem ser deletados
-					# do disco.
+					  # do disco.
 					arquivo_temporario = ClassArquivo(int(atri_Arquivo[0]),
 														atri_Arquivo[2],
-														(-1),	# BlocoInicial
+														(-2),	# BlocoInicial
 														(-1))	# TamanhoBlobo
 					vetor_arquivos_processos.append(arquivo_temporario)
 
@@ -134,7 +133,7 @@ class ClassDespachante:
 		# nas posicoes do vetor posicoesDisco.
 		posicoesDisco = self.gerenteArquivo.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
 
-		print(posicoesDisco)
+		#print(posicoesDisco)
 
 		# Retorna 3 vetores.
 		# vetor_arquivos_disco = Vetor de classeArquivo com os dados dos arquivos
@@ -142,7 +141,8 @@ class ClassDespachante:
 		# posicoesDisco = Posicoes dos arquivos no disco.
 		# vetor_arquivos_processos = Vetor de classeArquivo com os dados dos arquivos
 		#						que devem ser salvos no disco.
-		return vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos
+		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
+
 
 
 	# Em executeProcess a gente verifica se o processo faz referencia a
@@ -240,15 +240,27 @@ class ClassDespachante:
 		#self.imprimeProcessos(vetor_processos_tempoReal)
 		#Comentei o runFiles pq nao preciso disso agora
 		#vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
-		main_thread = current_thread()
-
 		self.gerenteFilas.setListaProcessos(lista_processos)
 		moveFilaRT = Thread(target=self.gerenteFilas.moverParaFilaRT,name='MoveFilaRT',args=())
 		moveFilaRT.start()
 		runFilaRT = Thread(target=self.gerenteFilas.executarProcessoFilaRT,name='RunFilaRT',args=())
 		runFilaRT.start()
+		#INICIAR THREADS AQUI - USUARIO
+		moveFilaUsuario = Thread(target=self.gerenteFilas.moverParaFilaUsuario,name='MoveFilaUsuario',args=())
+		moveFilaUsuario.start()
+		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
+		runFilaUsuario.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
+		
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
+
+
+		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
+		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT())
+
+		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco)
+
+
 
 
 		# vetor_arquivos_disco = arquivos ja em disco

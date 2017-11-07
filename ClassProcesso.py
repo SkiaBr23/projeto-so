@@ -17,6 +17,23 @@ class ClassProcesso:
 		self.int_numReqModem = int_numReqModem
 		self.int_numReqDisco = int_numReqDisco
 		self.int_aposTempInicializacao = 0
+		self.int_tokenCPU = False
+		self.int_esperaRecurso = False
+
+	def getEsperaRecurso(self):
+		return self.int_esperaRecurso
+
+	def setEsperaRecurso(self, valor):
+		self.int_esperaRecurso = valor
+
+	def activateTokenCPU(self):
+		self.int_tokenCPU = True
+
+	def deactivateTokenCPU(self):
+		self.int_tokenCPU = False
+
+	def getTokenCPU(self):
+		return self.int_tokenCPU
 
 	def getAposTempInicializacao(self):
 		return self.int_aposTempInicializacao
@@ -48,6 +65,9 @@ class ClassProcesso:
 	def getPrioridade (self):
 		return self.int_prioridade
 
+	def setPrioridade (self, valor):
+		self.int_prioridade = valor
+
 	def getPID (self):
 		return self.int_PID
 
@@ -65,6 +85,7 @@ class ClassProcesso:
 		print("Requisicao do Scanner = ", self.int_numReqScanner)
 		print("Requisicao do Modem = ", self.int_numReqModem)
 		print("Num codigo disco = ", self.int_numReqDisco)
+		print("TokenCPU: ", self.int_tokenCPU)
 
 
 	@staticmethod

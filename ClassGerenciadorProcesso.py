@@ -26,6 +26,8 @@ class ClassGerenciadorProcesso:
 								int(atri_Processo[3]), int(atri_Processo[4]),
 								int(atri_Processo[5]), int(atri_Processo[6]),
 								int(atri_Processo[7]), len(vetor_auxiliar))
+            if processo_temporario.getPrioridade() > 3:
+                processo_temporario.setPrioridade(3)
             vetor_auxiliar.append(processo_temporario)
         return self.organizaViaTempInicializacao(vetor_auxiliar)
 

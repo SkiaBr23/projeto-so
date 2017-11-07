@@ -1,0 +1,246 @@
+Cenário 1 - Processos de prioridade 1:
+2,1,10,32,0,0,0,0
+4,1,5,10,0,0,0,0
+5,1,2,10,0,0,0,0
+Execução correta:
+dispatcher =>
+	PID: 0
+	offset: 0
+	blocks: 32
+	priority: 1
+	time: 10
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 0
+P0 STARTED
+P0 instruction 1
+P0 instruction 2
+dispatcher =>
+	PID: 1
+	offset: 33
+	blocks: 10
+	priority: 1
+	time: 5
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 1
+P1 STARTED
+P1 instruction 1
+dispatcher =>
+	PID: 2
+	offset: 43
+	blocks: 10
+	priority: 1
+	time: 2
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 2
+P2 STARTED
+P2 instruction 1
+P0 instruction 3
+P1 instruction 2
+P2 instruction 2
+P2 return SIGINT
+P0 instruction 4
+P1 instruction 3
+P0 instruction 5
+P1 instruction 4
+P0 instruction 6
+P1 instruction 5
+P1 return SIGINT
+P0 instruction 7
+P0 instruction 8
+P0 instruction 9
+P0 instruction 10
+P0 return SIGINT
+
+Cenário 2 - Processos de prioridade 1 e 2:
+2,1,10,32,0,0,0,0
+4,2,5,10,0,0,0,0
+6,1,2,10,0,0,0,0
+Execução Correta:
+dispatcher =>
+	PID: 0
+	offset: 0
+	blocks: 32
+	priority: 1
+	time: 10
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 0
+P0 STARTED
+P0 instruction 1
+P0 instruction 2
+P0 instruction 3
+dispatcher =>
+	PID: 1
+	offset: 33
+	blocks: 10
+	priority: 2
+	time: 5
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 1
+P1 STARTED
+P1 instruction 1
+dispatcher =>
+	PID: 2
+	offset: 43
+	blocks: 10
+	priority: 1
+	time: 2
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 2
+P2 STARTED
+P2 instruction 1
+P0 instruction 4
+P1 instruction 2
+P2 instruction 2
+P2 return SIGINT
+P0 instruction 5
+P1 instruction 3
+P0 instruction 6
+P0 instruction 7
+P1 instruction 4
+P0 instruction 8
+P0 instruction 9
+P1 instruction 5
+P1 return SIGINT
+P0 instruction 10
+P0 return SIGINT
+
+Cenário 3 - Processos de prioridade 1,2 e 3:
+2,1,10,32,0,0,0,0
+4,2,5,10,0,0,0,0
+5,3,2,10,0,0,0,0
+Execução correta:
+dispatcher =>
+	PID: 0
+	offset: 0
+	blocks: 32
+	priority: 1
+	time: 10
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 0
+P0 STARTED
+P0 instruction 1
+P0 instruction 2
+P0 instruction 3
+dispatcher =>
+	PID: 1
+	offset: 33
+	blocks: 10
+	priority: 2
+	time: 5
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 1
+P1 STARTED
+P1 instruction 1
+dispatcher =>
+	PID: 2
+	offset: 43
+	blocks: 10
+	priority: 3
+	time: 2
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 2
+P2 STARTED
+P2 instruction 1
+P0 instruction 4
+P1 instruction 2
+P0 instruction 5
+P2 instruction 2
+P2 return SIGINT
+P0 instruction 6
+P0 instruction 7
+P0 instruction 8
+P1 instruction 3
+P0 instruction 9
+P0 instruction 10
+P0 return SIGINT
+P1 instruction 4
+P1 instruction 5
+P1 return SIGINT
+
+Cenário 4 - Processos de Usuário e RT
+2,1,10,32,0,0,0,0
+6,0,5,10,0,0,0,0
+8,1,2,10,0,0,0,0
+dispatcher =>
+	PID: 0
+	offset: 0
+	blocks: 32
+	priority: 1
+	time: 10
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 0
+P0 STARTED
+P0 instruction 1
+P0 instruction 2
+P0 instruction 3
+dispatcher =>
+	PID: 1
+	offset: 33
+	blocks: 10
+	priority: 0
+	time: 5
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 1
+P1 STARTED
+P1 instruction 1
+P1 instruction 2
+P1 instruction 3
+P1 instruction 4
+P1 instruction 5
+P1 return SIGINT
+P0 instruction 4
+dispatcher =>
+	PID: 2
+	offset: 43
+	blocks: 10
+	priority: 1
+	time: 2
+	printers: 0
+	scanners: 0
+	modems: 0
+	drives: 0
+process 2
+P2 STARTED
+P2 instruction 1
+P0 instruction 5
+P2 instruction 2
+P2 return SIGINT
+P0 instruction 6
+P0 instruction 7
+P0 instruction 8
+P0 instruction 9
+P0 instruction 10
+P0 return SIGINT

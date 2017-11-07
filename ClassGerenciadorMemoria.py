@@ -23,7 +23,6 @@ class ClassGerenciadorMemoria:
 				return False
 		else:
 			if processo.getBlocosMemoria() <= self.getMemoriaLivreProcessosUsuario():
-				self.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),SUBTRACAO)
 				return True
 			else:
 				return False
@@ -53,7 +52,10 @@ class ClassGerenciadorMemoria:
 		return self.int_memoria_processos_usuario
 
 	def atualizaMemoriaProcessosUsuario (self, valor, operacao):
-		return operacao(self.int_memoria_processos_usuario,valor)
+			if operacao == 'ADICAO':
+				self.int_memoria_processos_usuario += valor
+			elif operacao == 'SUBTRACAO':
+				self.int_memoria_processos_usuario -= valor
 
 	def getMemoriaLivreProcessosRT (self):
 		return self.int_memoria_processos_rt
