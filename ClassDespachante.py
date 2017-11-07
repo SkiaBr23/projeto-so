@@ -177,6 +177,27 @@ class ClassDespachante:
 				processo.imprimirValoresProcesso()
 				print("-----------------------------------------------")
 
+	def removeProcessosTempoInicializacaoIgual (self, lista_processos):
+		lista_processos_final = []
+		for processo in lista_processos:
+			if self.listWithoutEqualsInicializationTime(processo.getTempoInicializacao(), lista_processos_final):
+				lista_processos_final.append(processo)
+		return lista_processos_final
+
+	def listWithoutEqualsInicializationTime(self, tempoInicializa, lista_processos_final):
+		for processo in lista_processos_final:
+			if processo.getTempoInicializacao() == tempoInicializa:
+				return False
+		return True
+
+	def updatePIDs(self,lista_processos):
+		contador = 0
+		for processo in lista_processos:
+			processo.setPID(contador)
+			contador += 1
+		return lista_processos
+
+
 	def startSO (self):
 		#Criação das listas de processos e linhas do arquivo .txt de entrada
 		linhasArquivoProcesses = []
@@ -194,6 +215,10 @@ class ClassDespachante:
 		linhasArquivoFiles = self.lendoArquivoFiles()
 
 		lista_processos = self.gerenteProcessos.montaListaProcesses(linhasArquivoProcesses)
+
+		lista_processos = self.removeProcessosTempoInicializacaoIgual(lista_processos)
+
+		lista_processos = self.updatePIDs(lista_processos)
 
 		# Comentarios de progresso:
 		# Separei os processos. Agora temos que pensar em como executa-los.
