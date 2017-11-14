@@ -76,8 +76,6 @@ class ClassDespachante:
 		vetor_arquivos_processos = []
 
 		for linhaTemp in linhasArquivoFiles:
-			#print(linhaTemp)
-
 			if(contador == 0): # estamos lendo a primeira linha
 				quantBlocosDisco = int(linhaTemp)
 			if(contador == 1):
@@ -89,7 +87,6 @@ class ClassDespachante:
 				# ID_processo = -1
 
 				atri_Arquivo = linhaTemp.split(",")
-				#print(atri_Arquivo)
 
 				arquivo_temporario = ClassArquivo((-1), atri_Arquivo[0],
 													int(atri_Arquivo[1]),
@@ -122,7 +119,6 @@ class ClassDespachante:
 														(-1))	# TamanhoBlobo
 					vetor_arquivos_processos.append(arquivo_temporario)
 
-			#print("------------------------------------")
 			contador = contador + 1
 
 		posicoesDisco = []						# Nessa parte, temos que posicoesDisco seria a simulacao do disco
@@ -261,17 +257,3 @@ class ClassDespachante:
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT())
 
 		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco, todos_os_processos)
-
-
-
-
-		# vetor_arquivos_disco = arquivos ja em disco
-		# vetor_arquivos_processos = arquivos que serao executados por processos
-		# pode ser tanto para instrucoes de deletar como criar. Salvos na ordem
-		# do arquivo.
-
-
-
-
-		#self.imprimeFiles(vetor_arquivos_disco)
-		#self.imprimeFiles(vetor_arquivos_processos)

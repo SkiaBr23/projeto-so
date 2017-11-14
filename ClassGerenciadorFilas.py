@@ -38,32 +38,18 @@ class ClassGerenciadorFilas:
         AVANCAR = False
         while len(lista_global) > 0:
             processoTemp = lista_global[0]
-            #print('Iniciando while do tempo do processo ' + str(processoTemp.getPID()))
-            #print("Size lista_global: " + str(len(lista_global)))
-            #print("Size processo top: " + str(len(self.getListaProcessos())))
-            #print(tempoAtual)
-            #@TODO Tempo de diferença está em temp_cpu+temp_inicializacao, ajustar
             while time.time() <= (tempoInicio + processoTemp.getTempoInicializacao()) and processoTemp.getAposTempInicializacao() == 0:
                 AVANCAR = True
                 break
-                #Eu botei isso aqui pro python nao xaropar que tem while sem nd dentro
-                # xarope de indent, se alguem souber so arrumar dps
-                # Resposta: usar o 'pass' para laços vazios
-            #print(time.time())
             if AVANCAR:
                 AVANCAR = False
                 processo = lista_global.pop(0)
                 lista_global.append(processo)
                 continue
             processo = lista_global.pop(0)
-            #print('Processo poped ' + str(processo.getPID()))
-            #tempoAtual = time.time()
-            #print('Processo[' + str(processo.getPID()) + '] iniciado no tempo: ' + str(tempoAtual-tempoInicio))
-            #print('Passou aqui EIN ------------------------------------------------')
             if self.gerenteMemoria.verificaRequisicaoMemoria(processo):
                 processo.setAposTempInicializacao()
                 if self.gerenteMemoria.verificaDisponibilidadeMemoria(processo):
-                    #print('IF BROADER')
                     if processo.getPrioridade() == 0:
                         self.lockMoveFilaGlobal.acquire()
                         self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'SUBTRACAO')
@@ -116,25 +102,13 @@ class ClassGerenciadorFilas:
         return threadsAlive
 
     def moverParaFilaGlobal(self,processo):
-        #print('Passou no append fdp')
         self.FILA_GLOBAL.append(processo)
-        #print('Size fila global: ' + str(len(self.FILA_GLOBAL)))
 
     def moverParaFilaRT(self):
         while len(self.lista_processos) > 0 or self.isAnyThreadRTAlive():
-            #print('Lista processos maior que zero: ' + str(len(self.lista_processos) > 0))
-            #print('Any Thread Alive: ' + str(self.isAnyThreadAlive()))
-            #print('Meu Piru fila')
             if (len(self.FILA_GLOBAL) > 0 and self.isRTProcess()):
-                #print('Passou em moverParaFilaRT')
-                #GARANTIR QUE O PRIMEIRO PROCESSO NA FILA GLOBAL É RT!
                 processo = self.FILA_GLOBAL.pop(0)
-                #print('processo obtido tmp de inicializacao: ' + str(processo.getTempoInicializacao()))
                 self.FILA_RT.append(processo)
-                #print('Size fila RT apos apend fdp: ' + str(len(self.FILA_RT)))
-        #print('Size lista fdp: ' + str(len(self.getListaProcessos())))
-        #print('Alive: ' + str(self.isAnyThreadAlive()))
-        #print('Saiu piru fila')
 
     def moverParaFilaUsuario(self):
         while len(self.lista_processos) > 0 or self.isAnyThreadUsuarioAlive():
@@ -158,19 +132,13 @@ class ClassGerenciadorFilas:
     #Nova execute process para RTs
     def executarProcessoFilaRT(self):
         while len(self.lista_processos) > 0 or self.isAnyThreadRTAlive():
-            #print('Meu Piru run')
             if len(self.FILA_RT) > 0:
-                #print('Passou em executarProcessoFilaRT')
                 processo = self.FILA_RT.pop(0)
                 self.deactivateUserProcesses()
                 processo.activateTokenCPU()
                 t = Thread(target=self.executeProcessRT,name='ExecuteProcessRT'+str(processo.getPID()),args=(processo,))
-                #t.daemon = True
                 t.start()
                 self.THREADS_RT.append(t)
-            #print('Size lista fdp run: ' + str(len(self.getListaProcessos())))
-            #print('Alive run: ' + str(self.isAnyThreadAlive()))
-        #print('Saiu piru run')
 
     def deactivateUserProcesses(self):
         for processo in self.USER_PROCESSES_RUNNING:
@@ -227,7 +195,6 @@ class ClassGerenciadorFilas:
                         if self.CONTADOR_RUN_USUARIO%3 == 0:
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                             if boolean:
-                                #print("Caiu aqui 1")
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -235,14 +202,12 @@ class ClassGerenciadorFilas:
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
-                                #print("Caiu aqui 2")
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                                 continue
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
-                            #print("Caiu aqui 3")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -252,14 +217,12 @@ class ClassGerenciadorFilas:
                         elif not boolean and contadorCPU == processo.getTempoProcessador():
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                             if boolean:
-                                #print("Caiu aqui 1")
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                                 continue
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
-                                #print("Caiu aqui 1")
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -269,7 +232,6 @@ class ClassGerenciadorFilas:
                             #Verifica processos de prioridade 3 ou mais (menos prioritarios)
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
-                                #print("Caiu aqui 4")
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -277,7 +239,6 @@ class ClassGerenciadorFilas:
                         #Verifica se tem algum de nivel 1 esperando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
-                            #print("Caiu aqui 5")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -285,7 +246,6 @@ class ClassGerenciadorFilas:
                         #Verifica se tem algum de nivel 2 esperando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
-                            #print("Caiu aqui 6")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -294,7 +254,6 @@ class ClassGerenciadorFilas:
                         #caso nao haja mais prioridade 1 ou 2 e o contador nao esteja no valor correto
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                         if boolean:
-                            #print("Caiu aqui 1")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -302,21 +261,18 @@ class ClassGerenciadorFilas:
                     if processo.getPrioridade() == 3:
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
-                            #print("Caiu aqui 7")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
-                            #print("Caiu aqui 8")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                         if boolean:
-                            #print("Caiu aqui 9")
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -358,28 +314,6 @@ class ClassGerenciadorFilas:
             if processo.getPrioridade() > 0 and processo.getTokenCPU() == False:
                 processo.activateTokenCPU()
                 return
-
-    #BACKUP DE EXECUCAO
-    #def executeProcess(self, processo):
-        #self.lockStartProcess.acquire()
-        #self.imprimeInicioDeExecucaoProcesso(processo)
-        #self.gerenteMemoria.atualizaOffsetMemoria(processo.getBlocosMemoria())
-        #print("process " + str(processo.getPID()))
-        #print("P" + str(processo.getPID()) + " STARTED")
-        #contadorInstruc = 1
-        #contadorCPU = 0
-        #tempoAtual = time.time()
-        #while contadorCPU < processo.getTempoProcessador():
-            #if time.time() > (tempoAtual+1):
-                #print("P" + str(processo.getPID()) + " instruction " + str(contadorInstruc))
-                #contadorCPU += 1
-                #contadorInstruc += 1
-                #tempoAtual = time.time()
-        #print("P" + str(processo.getPID()) + " return SIGINT")
-        #self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'ADICAO')
-        #indice = self.getListaProcessos().index(processo)
-        #self.getListaProcessos().pop(indice)
-        #self.lockStartProcess.release()
 
     def imprimeInicioDeExecucaoProcesso(self, processo):
         print("dispatcher => ")

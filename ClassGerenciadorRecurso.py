@@ -19,8 +19,6 @@ class ClassGerenciadorRecurso:
         if processo.getRequisicaoDisco() != 0 and processo.getRequisicaoDisco() not in self.dispSataLivres:
             self.dispSataLivres.append(processo.getRequisicaoDisco())
 
-
-
     def verificaDisponibilidadeRecursos(self, processo):
         #Verificação de scanner
         if self.verificaDisponibilidadeScanner(processo):

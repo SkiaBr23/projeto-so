@@ -26,7 +26,6 @@ class ClassGerenciadorArquivo:
 
 		for processo in lista_processos:
 			idProcesso = processo.getPID()
-			print(idProcessoNoArquivo, " - ", idProcesso)
 			if(idProcessoNoArquivo == idProcesso):
 				idExiste = 1 # Existe processo 
 
@@ -46,22 +45,15 @@ class ClassGerenciadorArquivo:
 		idExiste = 0
 
 		for arquivo in vetor_arquivos_processos:
-			#print("------------------------------------------")
-			#arquivo.imprimirValoresArquivo()
-			#print("------------------------------------------")
 
 			idExiste = self.verificaProcessoExiste(arquivo, lista_processos)
 
 			if(idExiste == 1):
 
 				if(arquivo.getBlocoInicial() == (-1)):
-					#print("Instrucao para criacao de arquivo...")
-
 					self.inserirArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
 
 				else:
-					#print("Instrucao para deletar arquivo...")
-
 					self.deletarArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
 
 			else:
@@ -107,9 +99,6 @@ class ClassGerenciadorArquivo:
 
 		return (vetor_arquivos_disco, posicoesDisco)
 
-	# Funcao nao testada! Verificar funcionamento.
-	# Como temos dois arrays relacionados com os arquivos em disco,
-	# temos que nos preocupar em remover o arquivo de ambas referencias.
 	def deletarArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
 		
 		for index in range(len(vetor_arquivos_disco)):

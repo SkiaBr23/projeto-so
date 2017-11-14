@@ -48,10 +48,6 @@ class ClassGerenciadorProcesso:
         self.processos_RT = processos_tempoReal
         self.processos_usuario = processos_usuario
 
-    # @TODO Quem seria esse processos_all?
-    def getProcessos(self):
-        return self.processos_all
-
     def getProcessosRT(self):
         return self.processos_RT
 
