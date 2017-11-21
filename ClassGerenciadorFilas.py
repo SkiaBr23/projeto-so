@@ -54,7 +54,7 @@ class ClassGerenciadorFilas:
                         self.lockMoveFilaGlobal.acquire()
                         self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'SUBTRACAO')
                         self.moverParaFilaGlobal(processo)
-                        self.lockMoveFilaGlobal.release()   
+                        self.lockMoveFilaGlobal.release()
 
                     elif self.gerenteRecursos.verificaDisponibilidadeRecursos(processo):
                         self.lockMoveFilaGlobal.acquire()
@@ -106,15 +106,19 @@ class ClassGerenciadorFilas:
 
     def moverParaFilaRT(self):
         while len(self.lista_processos) > 0 or self.isAnyThreadRTAlive():
+            self.lockMoveFilaGlobal.acquire()
             if (len(self.FILA_GLOBAL) > 0 and self.isRTProcess()):
                 processo = self.FILA_GLOBAL.pop(0)
                 self.FILA_RT.append(processo)
+            self.lockMoveFilaGlobal.release()
 
     def moverParaFilaUsuario(self):
         while len(self.lista_processos) > 0 or self.isAnyThreadUsuarioAlive():
+            self.lockMoveFilaGlobal.acquire()
             if (len(self.FILA_GLOBAL) > 0 and self.isUsuarioProcess()):
                 processo = self.FILA_GLOBAL.pop(0)
                 self.FILA_USUARIO.append(processo)
+            self.lockMoveFilaGlobal.release()
 
     def executarProcessosFilaUsuario(self):
         while len(self.lista_processos) > 0 or self.isAnyThreadUsuarioAlive():
@@ -122,7 +126,7 @@ class ClassGerenciadorFilas:
                 processo = self.FILA_USUARIO.pop(0)
                 if not self.isAnyThreadUsuarioAlive():
                     processo.activateTokenCPU()
-                    
+
                 self.USER_PROCESSES_RUNNING.append(processo)
                 indice = self.USER_PROCESSES_RUNNING.index(processo)
                 t = Thread(target=self.executeProcessUsuario,name='ExecuteProcessUsuario'+str(processo.getPID()),args=(self.USER_PROCESSES_RUNNING[indice],))
