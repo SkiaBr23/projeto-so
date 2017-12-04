@@ -1,5 +1,7 @@
 #encoding=utf-8
 
+
+# Arquivo que possui a classe de objetos Arquivo. Possui seus metodos e suas atributos.
 class ClassArquivo:
 
 

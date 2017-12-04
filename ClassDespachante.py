@@ -45,6 +45,9 @@ class ClassDespachante:
 			print("Arquivo contendo os processos não encontrado, encerrando")
 			exit()
 
+
+# Descricao: realiza a leitura de arquivos no arquivo.txt . A leitura eh realizada linha a linha
+# Retorno: Um vetor das linhas do arquivo.txt 
 	def lendoArquivoFiles(self):
 
 		linhasArquivo = []
@@ -66,7 +69,14 @@ class ClassDespachante:
 			print("Arquivo contendo os processos não encontrado, encerrando")
 			exit()
 
-
+# Descricao: Nessa funcao os objetos arquivos sao criados a partir das linha lidas do arquivo.txt
+# Argumento: As linhas do txt
+# Retorno: 3 vetores
+# vetor_arquivos_disco = Vetor de classeArquivo com os dados dos arquivos
+#						ja salvos no disco.
+# posicoesDisco = Posicoes dos arquivos no disco.
+# vetor_arquivos_processos = Vetor de classeArquivo com os dados dos arquivos
+#						que devem ser salvos no disco.
 	def runFiles(self, linhasArquivoFiles):
 
 		contador = 0

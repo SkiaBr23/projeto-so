@@ -6,8 +6,10 @@ class ClassGerenciadorArquivo:
 
 
 
-	# Funcao criada para inserir os arquivos que ja estao no
+	# Descricao: Funcao criada para inserir os arquivos que ja estao no
 	# disco no momento de iniciacao do programa.
+	# Argumentos: vetor de posicoes do disco(que devem estar zerados) e o vetor de arquivos que ja
+	# devem estar salvos no disco quando o SO iniciar.
 	def inserirInicioDisco(self, vetor_arquivos_disco, posicoesDisco):
 
 		for arquivo in vetor_arquivos_disco:
@@ -17,7 +19,12 @@ class ClassGerenciadorArquivo:
 		return (posicoesDisco)
 	
 
-
+	# Descricao: Verifica se o processo existe.
+	# Argumentos: recebe o arquivo a ser gravado e a lista de processos do SO.
+	# Retorno:
+	# caso o processo nao exista = retorna 0.
+	# caso o processo nao exista = retorna 1.
+	#
 	def verificaProcessoExiste(self, arquivo, lista_processos):
 
 		idExiste = 0
@@ -32,9 +39,11 @@ class ClassGerenciadorArquivo:
 		return idExiste
 
 
-	# Nessa funcao, buscamos o primeiro arquivo no array(que foram inseridos na ordem do arquivo)
+	# Descricao: Nessa funcao, buscamos o primeiro arquivo no array(que foram inseridos na ordem do arquivo)
 	# que esteja relacionado ao processo em execucao. Nesse caso, verificamos se eh um processo de
 	# criacao ou remocao de arquivo.
+	# Argumentos: Lista de processos do SO, Os arquivos ja salvos no disco, as posicoes que eles ocupam
+	# e os arquivos que serao manipulados pelos processos do SO.
 	def executeArquivos(self, vetor_arquivos_processos,
 						vetor_arquivos_disco, posicoesDisco, lista_processos):
 
@@ -64,8 +73,10 @@ class ClassGerenciadorArquivo:
 			contador +=1
 			print("")
 
-	# Funcao para inserir um arquivo no disco. Essa funcao eh diferente da inserirInicioDisco
+	# descricao: Funcao para inserir um arquivo no disco. Essa funcao eh diferente da inserirInicioDisco
 	# pois nesse caso essa funcao realiza uma verificacao no disco.
+	# Argumentos: recebe o arquivo que vai ser salvo no disco, o vetor de arquivos que estao no disco, as posicoes
+	# dos arquivos no disco e um contador para mostrar o numero da operacao.
 	def inserirArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
 		
 		flagInserir = 0
@@ -99,6 +110,10 @@ class ClassGerenciadorArquivo:
 
 		return (vetor_arquivos_disco, posicoesDisco)
 
+	# Descricao: Deleta arquivo no disco. Funcao chamada quando deseja deletar arquivo.
+	# Argumentos: recebe o arquivo que vai ser salvo no disco, o vetor de arquivos que estao no disco, as posicoes
+	# dos arquivos no disco e um contador para mostrar o numero da operacao.
+	# Retorno: Retorna o vetor de posicoes no disco e o vetor de arquivos que estao salvos no disco.
 	def deletarArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
 		
 		for index in range(len(vetor_arquivos_disco)):
