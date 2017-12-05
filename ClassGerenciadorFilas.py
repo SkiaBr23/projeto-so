@@ -72,7 +72,7 @@ class ClassGerenciadorFilas:
             processo = lista_global.pop(0)
             #Estrutura condicional que verifica se há memória suficiente
             #para esse processo ser executado
-            if self.gerenteMemoria.verificaRequisicaoMemoria(processo):
+            if self.gerenteMemoria.verificaRequisicaoMemoria(processo) and self.gerenteRecursos.verificaRequisicaoRecursos(processo):
                 processo.setAposTempInicializacao()
                 #Verifica se existem recursos para esse processo, caso seja
                 #um processo de usuario
@@ -105,11 +105,15 @@ class ClassGerenciadorFilas:
                 else:
                     #Caso nao haja memoria no momento, processo irá aguardar
                     lista_global.append(processo)
-
+            # Problema na validação de requisitos. Processo será descartado
             else:
                 #Caso a requisição de memória seja maior do que o possivel,
+                # ou os recursos requisitados forem inválidos,
                 #descarta o processo e informa em tela
-                self.descartaProcesso(processo,'falta de memória')
+                if not self.gerenteMemoria.verificaRequisicaoMemoria(processo):
+                    self.descartaProcesso(processo,'falta de memória')
+                else:
+                    self.descartaProcesso(processo,'recurso requisitado inválido')
 
         #Laço de repetição que aguarda o fim das threads de tempo real,
         #e o esvaziamento da lista global de processos

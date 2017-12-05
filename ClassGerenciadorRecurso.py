@@ -33,6 +33,19 @@ class ClassGerenciadorRecurso:
         if processo.getRequisicaoDisco() != 0 and processo.getRequisicaoDisco() not in self.dispSataLivres:
             self.dispSataLivres.append(processo.getRequisicaoDisco())
 
+
+    # Verifica se a requisição de recursos foi feita corretamente.
+    # O processo pode requisitar apenas códigos válidos de recurso
+    # Argumentos: processo que solicita o recurso
+    def verificaRequisicaoRecursos(self,processo):
+        if processo.getRequisicaoScanner() in (0,1):
+            if processo.getRequisicaoModem() in (0,1):
+                if processo.getRequisicaoImpressora() in (0,1,2):
+                    if processo.getRequisicaoDisco() in (0,1,2):
+                        return True
+        return False                
+
+
     # Executa a verificação de disponibilidade de todos os recursos em cascata.
     # Argumentos: processo que solicita o recurso
     def verificaDisponibilidadeRecursos(self, processo):
