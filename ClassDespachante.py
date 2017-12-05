@@ -7,12 +7,15 @@
 #			Eduardo Schuabb
 # Projeto Final
 
+#Importação de classes
 from ClassGerenciadorProcesso import *
 from ClassGerenciadorFilas import *
 from ClassGerenciadorArquivo import *
 
+#Classe Despachante para organizar e inicializar a operação do PseudoSO
 class ClassDespachante:
 
+	#Construtor da classe
 	def __init__ (self, arquivoProcesses, arquivoFiles):
 		self.arquivoProcesses = arquivoProcesses
 		self.arquivoFiles = arquivoFiles
@@ -77,7 +80,8 @@ class ClassDespachante:
 			print("Arquivo contendo os processos não encontrado, encerrando")
 			exit()
 
-# Descricao: Nessa funcao os objetos arquivos sao criados a partir das linha lidas do arquivo.txt
+# Descricao: Nessa funcao os objetos arquivos sao criados a partir das linhas
+# lidas do arquivo.txt
 # Argumento: As linhas do txt
 # Retorno: 3 vetores
 # vetor_arquivos_disco = Vetor de classeArquivo com os dados dos arquivos
@@ -157,7 +161,7 @@ class ClassDespachante:
 		#						que devem ser salvos no disco.
 		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
 
-
+	#Método para impressão de lista de processos
 	def imprimeProcessos(self, vetorProcessos):
 		if not vetorProcessos:
 			print("Vetor de processos vazio")
@@ -166,6 +170,8 @@ class ClassDespachante:
 				processo.imprimirValoresProcesso()
 				print("-----------------------------------------------")
 
+	#Método para remover processos que apresentam tempo de inicialização
+	#igual, mantendo somente um deles
 	def removeProcessosTempoInicializacaoIgual (self, lista_processos):
 		lista_processos_final = []
 		for processo in lista_processos:
@@ -173,12 +179,16 @@ class ClassDespachante:
 				lista_processos_final.append(processo)
 		return lista_processos_final
 
+	#Método para avaliar se um processo com tempo de inicialização X já se
+	#encontra na lista de processos
 	def listWithoutEqualsInicializationTime(self, tempoInicializa, lista_processos_final):
 		for processo in lista_processos_final:
 			if processo.getTempoInicializacao() == tempoInicializa:
 				return False
 		return True
 
+	#Método para atualizar os IDs dos processos, após remover
+	#prováveis processos repetidos
 	def updatePIDs(self,lista_processos):
 		contador = 0
 		for processo in lista_processos:
@@ -186,7 +196,7 @@ class ClassDespachante:
 			contador += 1
 		return lista_processos
 
-
+	#Método de inicialização do PseudoSO
 	def startSO (self):
 		#Criação das listas de processos e linhas do arquivo .txt de entrada
 		linhasArquivoProcesses = []
@@ -201,27 +211,50 @@ class ClassDespachante:
 		#Leitura das linhas do arquivo .txt de entrada com os processos
 		linhasArquivoProcesses = self.lendoArquivoProcesses()
 
+		#Leitura das linhas do arquivo .txt de entrada com os files
 		linhasArquivoFiles = self.lendoArquivoFiles()
 
+		#Montagem da lista de processos geral
 		lista_processos = self.gerenteProcessos.montaListaProcesses(linhasArquivoProcesses)
 
+		#Cópia da lista de processos
 		todos_os_processos = lista_processos
 
+		#Remoção de processos com tempo de inicialização iguais
 		lista_processos = self.removeProcessosTempoInicializacaoIgual(lista_processos)
 
+		#Atualização de IDs dos processos após remoção de processos com
+		#tempo de inicialização iguais
 		lista_processos = self.updatePIDs(lista_processos)
 
+		#Set da lista de processos no gerenciador de filas
 		self.gerenteFilas.setListaProcessos(lista_processos)
+
+		#Inicialização da thread que move os processos da fila global para a
+		#fila de processos de tempo real
 		moveFilaRT = Thread(target=self.gerenteFilas.moverParaFilaRT,name='MoveFilaRT',args=())
 		moveFilaRT.start()
+
+		#Inicialização da thread que realiza a chamada para execução dos
+		#processos de tempo real
 		runFilaRT = Thread(target=self.gerenteFilas.executarProcessoFilaRT,name='RunFilaRT',args=())
 		runFilaRT.start()
+
+		#Inicialização da thread que move os processos da fila global para a
+		#fila de processos de usuario
 		moveFilaUsuario = Thread(target=self.gerenteFilas.moverParaFilaUsuario,name='MoveFilaUsuario',args=())
 		moveFilaUsuario.start()
+
+		#Inicialização da thread que realiza a chamada para execução dos
+		#processos de usuario
 		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
 		runFilaUsuario.start()
+
+		#Chamada do método que executa os processos
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
 
+		#Obtenção dos valores do .txt de files para execução dos files
 		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
-		
+
+		#Chamada do método que executa os files
 		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco, todos_os_processos)

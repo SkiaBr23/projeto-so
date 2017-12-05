@@ -42,8 +42,8 @@ class ClassGerenciadorProcesso:
             vetor_auxiliar.append(processo_temporario)
         return self.organizaViaTempInicializacao(vetor_auxiliar)
 
-    #Método para remover processos com tempo de inicialização igual, permanecendo
-    #somente um deles
+    #Método para organizar lista de processos com base
+    #no tempo de inicialização de cada processo, em ordem crescente
     @staticmethod
     def organizaViaTempInicializacao(vetor_processos):
         vetor_processos.sort(key = operator.attrgetter('int_TempIniciacao'))
