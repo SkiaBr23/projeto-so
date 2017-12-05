@@ -1,5 +1,11 @@
 #encoding=utf-8
 
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
 
 # Arquivo que possui a classe de objetos Arquivo. Possui seus metodos e suas atributos.
 class ClassArquivo:
@@ -32,23 +38,8 @@ class ClassArquivo:
 		return self.char_Nome_Arquivo
 
 	def imprimirValoresArquivo(self):
-		
+
 		print("ID do processo: ", self.int_ID_Processo)
 		print("Nome do arquivo: " + self.char_Nome_Arquivo)
 		print("Bloco Inicial: ", self.int_Bloco_Inicial)
 		print("Quantidade de Blocos: ", self.int_Num_Blocos)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

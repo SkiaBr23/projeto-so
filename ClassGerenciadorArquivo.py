@@ -1,4 +1,12 @@
 #encoding=utf-8
+
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 from ClassArquivo import *
 from ClassProcesso import *
 
@@ -15,9 +23,9 @@ class ClassGerenciadorArquivo:
 		for arquivo in vetor_arquivos_disco:
 			for posicoesArquivo in range(arquivo.getBlocoInicial(), (arquivo.getBlocoInicial() + arquivo.getNumBlocos())):
 				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
-		
+
 		return (posicoesDisco)
-	
+
 
 	# Descricao: Verifica se o processo existe.
 	# Argumentos: recebe o arquivo a ser gravado e a lista de processos do SO.
@@ -34,7 +42,7 @@ class ClassGerenciadorArquivo:
 		for processo in lista_processos:
 			idProcesso = processo.getPID()
 			if(idProcessoNoArquivo == idProcesso):
-				idExiste = 1 # Existe processo 
+				idExiste = 1 # Existe processo
 
 		return idExiste
 
@@ -78,7 +86,7 @@ class ClassGerenciadorArquivo:
 	# Argumentos: recebe o arquivo que vai ser salvo no disco, o vetor de arquivos que estao no disco, as posicoes
 	# dos arquivos no disco e um contador para mostrar o numero da operacao.
 	def inserirArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
-		
+
 		flagInserir = 0
 		tamanhoArquivo = arquivo.getNumBlocos()
 
@@ -115,7 +123,7 @@ class ClassGerenciadorArquivo:
 	# dos arquivos no disco e um contador para mostrar o numero da operacao.
 	# Retorno: Retorna o vetor de posicoes no disco e o vetor de arquivos que estao salvos no disco.
 	def deletarArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
-		
+
 		for index in range(len(vetor_arquivos_disco)):
 			if(vetor_arquivos_disco[index].getNomeArquivo() == arquivo.getNomeArquivo()):
 				break

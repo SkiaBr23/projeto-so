@@ -1,5 +1,12 @@
 #encoding=utf-8
 
+# Universidade de Brasília
+# Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+#
+# Projeto Final
 # Para executar o programa:
 #
 #	python3 main.py  (Para execução com arquivos padrão)

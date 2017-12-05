@@ -1,4 +1,12 @@
 #encoding=utf-8
+
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 from ClassGerenciadorProcesso import *
 from ClassGerenciadorFilas import *
 from ClassGerenciadorArquivo import *
@@ -47,7 +55,7 @@ class ClassDespachante:
 
 
 # Descricao: realiza a leitura de arquivos no arquivo.txt . A leitura eh realizada linha a linha
-# Retorno: Um vetor das linhas do arquivo.txt 
+# Retorno: Um vetor das linhas do arquivo.txt
 	def lendoArquivoFiles(self):
 
 		linhasArquivo = []
@@ -150,31 +158,6 @@ class ClassDespachante:
 		return(vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos)
 
 
-
-	# Em executeProcess a gente verifica se o processo faz referencia a
-	# manipulacao de arquivos (por meio do PID) ------------------------------------------> DONE
-
-	# e tambem se faz referencia a algum recurso (modem, impressora...). Caso faca referencia
-	# a algum recurso, travamos ele. -----------------------------------------------------> NOT DONE
-
-	# No caso de processos de tempo real, isso eh tranquilo pq eh FIFO sem ser
-	# preemptivo. Entao ele comeca e termina.
-	# No caso de processos de usuario, quando o recurso for alocado, ele so eh
-	# desalocado quando temrinar o processo. (Ainda tem que pensar um pouco mais...)
-	#-------------------------------------------------------------------------------------------------------
-
-		# Um grande problema eh que no roteiro da professora, a manipulacao dos arquivos nao esta seguindo a ordem
-		# de execucao dos processos e sim a ordem de execucao do arquivo. Nao faz sentido essa ordem do roteiro.
-		# Eu estou seguindo a ordem de execucao dos processos. Na funcao executeProcess, eu faco a busca dos arquivos
-		# que sao referenciados pelo processo que esta sendo executado. Ou seja, a primeira operacao de arquivo seria
-		# com o processo 0, ja no exemplo dela, a primeira eh com o processo 1. O que eu meu entendimento esta errado.
-
-	#--------------------------------------------------------------------------------------------------------
-
-	# O que falta: Fazer a verificacao de outras operacoes que manipulam arquivos de um mesmo processo.
-	# Com essa logica que eu pensei tempos, por enquanto: Uma manupulacao de arquivo por processo.
-
-
 	def imprimeProcessos(self, vetorProcessos):
 		if not vetorProcessos:
 			print("Vetor de processos vazio")
@@ -228,42 +211,17 @@ class ClassDespachante:
 
 		lista_processos = self.updatePIDs(lista_processos)
 
-		# Comentarios de progresso:
-		# Separei os processos. Agora temos que pensar em como executa-los.
-		# Processos de tempo real eh FIFO
-		# Processos de usuario eh sao minimo 3 filas de prioridades.
-		# Minha ideia:
-		# Definimos 3 vetores para esses processos.
-		#
-		# Primeiro: Organizamos por prioridade de processos e executa por meio
-		# 			do RoundRobin(preemptivo com quantum 1).
-		# Segundo: RoundRobin sem definicao por prioridade (quantum 3).
-		# Terceiro: FIFO (nao preemptivo). POSSO ESTAR SENDO RADICAL. ANALISAR
-		#									COM CUIDADO -> Quero evitar Starvation
-		# A execucao dos processos de usuario serao semelhantes as de tempo real
-		# usando o lock e etc.
-
-		#Comentei esse separaProcessos pq nao faz sentido ja manter eles separados sem saber se tem os recursos
-		#self.gerenteProcessos.separaProcessos(self.gerenteProcessos.getProcessos())
-		#self.imprimeProcessos(vetor_processos_tempoReal)
-		#Comentei o runFiles pq nao preciso disso agora
-		#vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
 		self.gerenteFilas.setListaProcessos(lista_processos)
 		moveFilaRT = Thread(target=self.gerenteFilas.moverParaFilaRT,name='MoveFilaRT',args=())
 		moveFilaRT.start()
 		runFilaRT = Thread(target=self.gerenteFilas.executarProcessoFilaRT,name='RunFilaRT',args=())
 		runFilaRT.start()
-		#INICIAR THREADS AQUI - USUARIO
 		moveFilaUsuario = Thread(target=self.gerenteFilas.moverParaFilaUsuario,name='MoveFilaUsuario',args=())
 		moveFilaUsuario.start()
 		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
 		runFilaUsuario.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
-		
-		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
-
 
 		vetor_arquivos_disco, posicoesDisco, vetor_arquivos_processos = self.runFiles(linhasArquivoFiles)
-		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT())
-
+		
 		self.gerenteArquivo.executeArquivos(vetor_arquivos_processos, vetor_arquivos_disco, posicoesDisco, todos_os_processos)
