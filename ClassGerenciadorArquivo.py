@@ -71,7 +71,7 @@ class ClassGerenciadorArquivo:
 					self.inserirArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
 
 				else:
-					self.deletarArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
+					self.deletarArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador, lista_processos)
 
 			else:
 				print("Operacao ", contador, " => Falha\n")
@@ -122,21 +122,43 @@ class ClassGerenciadorArquivo:
 	# Argumentos: recebe o arquivo que vai ser salvo no disco, o vetor de arquivos que estao no disco, as posicoes
 	# dos arquivos no disco e um contador para mostrar o numero da operacao.
 	# Retorno: Retorna o vetor de posicoes no disco e o vetor de arquivos que estao salvos no disco.
-	def deletarArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador):
+	def deletarArquivoDisco(self, arquivo, vetor_arquivos_disco, posicoesDisco, contador, lista_processos):
 
-		for index in range(len(vetor_arquivos_disco)):
-			if(vetor_arquivos_disco[index].getNomeArquivo() == arquivo.getNomeArquivo()):
+		#processoArquivo eh o processo que quer deletar o arquivo.
+		processoArquivo = arquivo.getIDProcesso()
+
+		#nomeArquivo eh o nome do arquivo que queremos deletar.
+		nomeArquivoDeletar = arquivo.getNomeArquivo()
+
+		for file in vetor_arquivos_disco:
+			if(file.getNomeArquivo() == nomeArquivoDeletar):
+				break;
+
+		for processo in lista_processos:
+			if(processo.getPID() == processoArquivo):
+				#processo.imprimirValoresProcesso()
+				prioridadeProcesso = processo.getPrioridade()
 				break
 
-		del vetor_arquivos_disco[index]
+		if((file.getIDProcesso() == processoArquivo) or (prioridadeProcesso == 0)):
+
+			for index in range(len(vetor_arquivos_disco)):
+				if(vetor_arquivos_disco[index].getNomeArquivo() == arquivo.getNomeArquivo()):
+					break
+
+			del vetor_arquivos_disco[index]
 
 
-		for posicoesArquivo in range(len(posicoesDisco)):
-			if(posicoesDisco[posicoesArquivo] == arquivo.getNomeArquivo()):
-				posicoesDisco[posicoesArquivo] = "0"
+			for posicoesArquivo in range(len(posicoesDisco)):
+				if(posicoesDisco[posicoesArquivo] == arquivo.getNomeArquivo()):
+					posicoesDisco[posicoesArquivo] = "0"
 
-		print("Operacao ", contador, " => Sucesso")
-		print("O processo ", arquivo.getIDProcesso(), " deletou o arquivo " + arquivo.getNomeArquivo())
+			print("Operacao ", contador, " => Sucesso")
+			print("O processo ", arquivo.getIDProcesso(), " deletou o arquivo " + arquivo.getNomeArquivo())
+
+		else:
+			print("Operacao", contador, "=> falha")
+			print("O processo ", arquivo.getIDProcesso(), " nao criou o arquivo " + arquivo.getNomeArquivo() + " e o processo nao e de tempo real.");
 
 		return (vetor_arquivos_disco, posicoesDisco)
 
