@@ -28,8 +28,14 @@ class ClassProcesso:
 		self.int_numReqDisco = int_numReqDisco
 		self.int_aposTempInicializacao = 0
 		self.int_tokenCPU = False
+		self.int_hasExecuted = False
 		self.int_esperaRecurso = False
 
+	def getHasExecuted(self):
+		return self.int_hasExecuted
+
+	def setHasExecuted(self):
+		self.int_hasExecuted = True
 
 	#Método de get e set de atributos
 	def getEsperaRecurso(self):

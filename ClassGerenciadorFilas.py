@@ -35,6 +35,7 @@ class ClassGerenciadorFilas:
         self.CONTADOR_RUN_USUARIO = 0
         self.RT_STARTED = 0
         self.USER_PROCESSES_RUNNING = []
+        self.RT_PROCESSES_RUNNING = []
 
     #Método para setar a lista de processos global
     def setListaProcessos(self,vetor_processos):
@@ -191,7 +192,7 @@ class ClassGerenciadorFilas:
                 processo = self.FILA_USUARIO.pop(0)
                 #Estrutura condicional que seta o token de 'utilização da CPU'
                 #para o processo quando não há nenhum outro em execução
-                if not self.isAnyThreadUsuarioAlive():
+                if not self.isAnyThreadUsuarioAlive() and not self.isAnyThreadRTAlive():
                     processo.activateTokenCPU()
 
                 #Adição do processo a ser executado na lista de processos de
@@ -218,6 +219,7 @@ class ClassGerenciadorFilas:
                 self.deactivateUserProcesses()
                 #Ativação do token de 'utilização' para esse processo de tempo real
                 processo.activateTokenCPU()
+                self.RT_PROCESSES_RUNNING.append(processo)
                 #Chamada da thread
                 t = Thread(target=self.executeProcessRT,name='ExecuteProcessRT'+str(processo.getPID()),args=(processo,))
                 t.start()
@@ -290,8 +292,6 @@ class ClassGerenciadorFilas:
         #tempo de execução do mesmo
         while contadorCPU < processo.getTempoProcessador():
             if processo.getTokenCPU() and self.RT_STARTED == 0:
-                #print("antes do acquire")
-                #print("passooou ")
                 if time.time() > (tempoAtual+1):
                     self.lockStartProcess.acquire()
                     print("P" + str(processo.getPID()) + " instruction " + str(contadorInstruc))
@@ -423,6 +423,7 @@ class ClassGerenciadorFilas:
                     contadorInstruc += 1
                     tempoAtual = time.time()
         print("P" + str(processo.getPID()) + " return SIGINT")
+        processo.setHasExecuted()
         #Atualização da memória livre
         self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'ADICAO')
         #Remoção do processo com execução completa
@@ -433,7 +434,17 @@ class ClassGerenciadorFilas:
         #Liberação do objeto Lock
         self.lockStartProcess.release()
         #Verificação de processo de usuário aguarando para ser escalonado
-        self.activateFirstUserProcess()
+        #caso não haja threads de tempo real bloqueadas pelo Lock
+        if not self.hasAnyThreadRTWaiting():
+            self.activateFirstUserProcess()
+
+    #Método que avalia se existem threads de tempo real bloqueadas,
+    #aguardando por execução
+    def hasAnyThreadRTWaiting(self):
+        for processo in self.RT_PROCESSES_RUNNING:
+            if processo.getHasExecuted() == False:
+                return True
+        return False
 
     #Método que realiza a ativação do token de 'utilização de CPU' para o
     #processo na primeira posição da lista de processos de usuario em execução,
