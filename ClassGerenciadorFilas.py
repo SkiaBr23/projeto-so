@@ -277,6 +277,8 @@ class ClassGerenciadorFilas:
 
     #Método que realiza a execução propriamente dita do processo de usuario
     def executeProcessUsuario(self, processo):
+        #Laço de repetição que bloqueia a execução do processo de usuário
+        #enquanto o token de 'utilização de CPU' estiver bloqueado
         while not processo.getTokenCPU():
             pass
         #Impressao de informações do processo
@@ -291,32 +293,62 @@ class ClassGerenciadorFilas:
         #Laço de repetição para executar o processo de tempo real durante o
         #tempo de execução do mesmo
         while contadorCPU < processo.getTempoProcessador():
+            #Estrutura condicional que verifica se o processo de usuário está
+            #com o token de 'utilização da CPU' e se não existem processos de
+            #tempo real em execução
             if processo.getTokenCPU() and self.RT_STARTED == 0:
                 if time.time() > (tempoAtual+1):
+                    #Ativação do objeto Lock para impedir outro processo de
+                    #usuário a executar
                     self.lockStartProcess.acquire()
+                    #Impressão de 'instrução' do processo
                     print("P" + str(processo.getPID()) + " instruction " + str(contadorInstruc))
                     contadorCPU += 1
                     contadorInstruc += 1
                     tempoAtual = time.time()
+                    #Incremento do contador de instruções de processos de usuario
                     self.CONTADOR_RUN_USUARIO += 1
+                    #Liberação do objeto Lock
                     self.lockStartProcess.release()
+                    #Estrutura condicional que avalia se o processo em execução
+                    #é um processo de prioridade 1
                     if processo.getPrioridade() == 1:
+                        #Se for, verifica se o contador de instruções global de
+                        #processos de usuário é divisível por 3
                         if self.CONTADOR_RUN_USUARIO%3 == 0:
+                            #Se for, verifica se existe algum processo de
+                            #prioridade nível 2 aguardando por executar
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                             if boolean:
+                                #Se houver, desativa o token de 'utilização da CPU'
+                                #para o processo atual e passa esse token para
+                                #o processo de prioridade 2 verificado
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                                 continue
+                        #Estrutura condicional que verifica se o contador de
+                        #instruções global de processos de usuário é divisível por 4
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
+                            #Se for, verifica se existe algum processo de
+                            #prioridade nível 3 aguardando por executar
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
+                                #Se houver, desativa o token de 'utilização da CPU'
+                                #para o processo atual e passa esse token para
+                                #o processo de prioridade 3 verificado
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                                 continue
+                        #Caso não haja nenhum processo de prioridade 2 ou 3
+                        #aguardando, busca-se por outro processo de prioridade 1
+                        #que esteja aguardando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 1 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -336,11 +368,19 @@ class ClassGerenciadorFilas:
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                                 continue
+                    #Estrutura condicional que avalia se o processo em execução
+                    #é um processo de prioridade 2
                     if processo.getPrioridade() == 2:
+                        #Estrutura condicional que verifica se o contador de
+                        #instruções global de processos de usuário é divisível por 4
                         if self.CONTADOR_RUN_USUARIO%4 == 0:
-                            #Verifica processos de prioridade 3 ou mais (menos prioritarios)
+                            #Verifica se existem processos de prioridade 3
+                            #aguardando por execução
                             boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                             if boolean:
+                                #Se houver, desativa o token de 'utilização da CPU'
+                                #para o processo atual e passa esse token para
+                                #o processo de prioridade 3 verificado
                                 if (contadorCPU != processo.getTempoProcessador()):
                                     processo.deactivateTokenCPU()
                                 self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -348,6 +388,9 @@ class ClassGerenciadorFilas:
                         #Verifica se tem algum de nivel 1 esperando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 1 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
@@ -355,33 +398,57 @@ class ClassGerenciadorFilas:
                         #Verifica se tem algum de nivel 2 esperando
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 2 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
-                        #Adicionado este, pq verifica se tem alguem de prioridade 3 esperando,
-                        #caso nao haja mais prioridade 1 ou 2 e o contador nao esteja no valor correto
+                        #Estrutura condicional que verifica se tem algum processo
+                        #de prioridade 3 esperando, caso nao haja mais prioridade 1
+                        #ou 2 e o contador nao esteja no valor correto
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 3 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
+                    #Estrutura condicional que avalia se o processo em execução
+                    #é um processo de prioridade 3
                     if processo.getPrioridade() == 3:
+                        #Verifica-se se existe algum processo de prioridade 1
+                        #aguardando para executar
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,1)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 1 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
+                        #Verifica-se se existe algum processo de prioridade 2
+                        #aguardando para executar
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,2)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 2 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
+                        #Verifica-se se existe algum processo de prioridade 3
+                        #aguardando para executar
                         boolean, indiceProcesso = self.hasProcessWaiting(processo,3)
                         if boolean:
+                            #Se houver, desativa o token de 'utilização da CPU'
+                            #para o processo atual e passa esse token para
+                            #o processo de prioridade 3 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
