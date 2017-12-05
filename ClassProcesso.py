@@ -7,9 +7,11 @@
 #			Eduardo Schuabb
 # Projeto Final
 
+#Classe que modelo um Processo no PseudoSO
 class ClassProcesso:
 
 
+	#Construtor da classe
 	def __init__(self, int_TempIniciacao, int_prioridade,
 					int_tempDeProcessador, int_blocosDeMem,
 					int_numReqImpressora,int_numReqScanner,
@@ -28,6 +30,8 @@ class ClassProcesso:
 		self.int_tokenCPU = False
 		self.int_esperaRecurso = False
 
+
+	#Método de get e set de atributos
 	def getEsperaRecurso(self):
 		return self.int_esperaRecurso
 
@@ -82,6 +86,7 @@ class ClassProcesso:
 	def setPID(self,valor):
 		self.int_PID = valor
 
+	#Método para impressão dos atributos do processo
 	def imprimirValoresProcesso(self):
 
 		print("PID = ", self.int_PID)
@@ -94,12 +99,3 @@ class ClassProcesso:
 		print("Requisicao do Modem = ", self.int_numReqModem)
 		print("Num codigo disco = ", self.int_numReqDisco)
 		print("TokenCPU: ", self.int_tokenCPU)
-
-
-	@staticmethod
-	def envelhecimento(fila_processos):
-
-		for processo in fila_processos:
-			processo.int_prioridade = processo.int_prioridade - 1
-
-		return fila_processos
