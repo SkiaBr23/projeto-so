@@ -1,5 +1,12 @@
 #encoding=utf-8
 
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 import operator
 
 TAMANHO_TOTAL_MEMORIA = 1024

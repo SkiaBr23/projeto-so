@@ -1,4 +1,12 @@
 #encoding=utf-8
+
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 from ClassGerenciadorProcesso import *
 from ClassGerenciadorFilas import *
 from ClassGerenciadorArquivo import *
@@ -47,7 +55,7 @@ class ClassDespachante:
 
 
 # Descricao: realiza a leitura de arquivos no arquivo.txt . A leitura eh realizada linha a linha
-# Retorno: Um vetor das linhas do arquivo.txt 
+# Retorno: Um vetor das linhas do arquivo.txt
 	def lendoArquivoFiles(self):
 
 		linhasArquivo = []
@@ -259,7 +267,7 @@ class ClassDespachante:
 		runFilaUsuario = Thread(target=self.gerenteFilas.executarProcessosFilaUsuario,name='RunFilaUsuario',args=())
 		runFilaUsuario.start()
 		self.gerenteFilas.runProcesses(self.gerenteFilas.getListaProcessos())
-		
+
 		#self.gerenteProcessos.runProcesses(self.gerenteProcessos.getProcessosRT(), vetor_arquivos_processos,vetor_arquivos_disco, posicoesDisco)
 
 

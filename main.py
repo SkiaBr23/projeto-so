@@ -1,7 +1,12 @@
 #encoding=utf-8
 
-# Para executar o programa:
-#	python3 teste1.py
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 from ClassInfo import *
 from ClassDespachante import *
 import sys

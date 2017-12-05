@@ -1,5 +1,12 @@
 #encoding=utf-8
 
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 from ClassProcesso import *
 from ClassGerenciadorMemoria import *
 from ClassGerenciadorRecurso import *

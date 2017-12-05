@@ -1,6 +1,13 @@
 #encoding=utf-8
 import os
 
+#Universidade de Brasília
+#Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+# Projeto Final
+
 class ClassInfo:
 
     @staticmethod
