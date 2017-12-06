@@ -1,0 +1,20 @@
+# Universidade de Brasília
+# Sistemas Operacionais - 02/2017
+# Alunos: 	Maximillian Xavier
+#			Rafael Costa
+#			Eduardo Schuabb
+#
+# Projeto Final
+# Para executar o programa:
+#
+#	python3 main.py  (Para execução com arquivos padrão)
+#
+# 	ou
+#   
+# 	python3 main.py -p processes.txt -f files.txt  (Para execução com arquivos customizados)
+#
+#   Os arquivos para teste estão disponíveis no diretório test/
+#
+# Obs: É obrigatório o uso de Python3 para o funcionamento
+# correto do programa.
+#
