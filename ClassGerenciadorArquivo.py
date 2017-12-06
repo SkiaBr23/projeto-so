@@ -158,7 +158,7 @@ class ClassGerenciadorArquivo:
 
 		else:
 			print("Operacao", contador, "=> falha")
-			print("O processo ", arquivo.getIDProcesso(), " nao criou o arquivo " + arquivo.getNomeArquivo() + " e o processo nao e de tempo real.");
+			print("O processo ", arquivo.getIDProcesso(), " nao deletou o arquivo " + arquivo.getNomeArquivo() + " e o processo nao e de tempo real.");
 
 		return (vetor_arquivos_disco, posicoesDisco)
 
