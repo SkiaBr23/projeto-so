@@ -151,8 +151,6 @@ class ClassDespachante:
 		# nas posicoes do vetor posicoesDisco.
 		posicoesDisco = self.gerenteArquivo.inserirInicioDisco(vetor_arquivos_disco, posicoesDisco)
 
-		#print(posicoesDisco)
-
 		# Retorna 3 vetores.
 		# vetor_arquivos_disco = Vetor de classeArquivo com os dados dos arquivos
 		#						ja salvos no disco.
