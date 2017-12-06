@@ -13,7 +13,6 @@ from ClassGerenciadorRecurso import *
 from ClassGerenciadorArquivo import *
 import time
 from threading import *
-import operator
 
 #Classe para gerenciar as filas de processos e sua execução
 class ClassGerenciadorFilas:
