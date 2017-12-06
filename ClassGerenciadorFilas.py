@@ -113,11 +113,12 @@ class ClassGerenciadorFilas:
                     self.descartaProcesso(processo,'falta de memória')
                 else:
                     self.descartaProcesso(processo,'recurso requisitado inválido')
-
+            #print("Size da lista: " + str(len(lista_global)))
         #Laço de repetição que aguarda o fim das threads de tempo real,
         #e o esvaziamento da lista global de processos
         while self.isAnyThreadRTAlive() or len(self.getListaProcessos()) > 0:
             pass
+
 
         #Laço de repetição que aguarda o fim das threads de usuario,
         #e o esvaziamento da lista global de processos
@@ -353,6 +354,7 @@ class ClassGerenciadorFilas:
                             #para o processo atual e passa esse token para
                             #o processo de prioridade 1 verificado
                             if (contadorCPU != processo.getTempoProcessador()):
+                                #print("Passou aei asdasidas asydasd asdyasydusa asdasydg")
                                 processo.deactivateTokenCPU()
                             self.USER_PROCESSES_RUNNING[indiceProcesso].activateTokenCPU()
                             continue
@@ -458,10 +460,11 @@ class ClassGerenciadorFilas:
                             continue
 
         print("P" + str(processo.getPID()) + " return SIGINT")
+        processo.activateTokenCPU()
         #Liberação de recursos que o processo estava utilizando
         self.gerenteRecursos.liberaRecursos(processo)
         #Atualização da memória livre
-        self.gerenteMemoria.atualizaMemoriaProcessosRT(processo.getBlocosMemoria(),'ADICAO')
+        self.gerenteMemoria.atualizaMemoriaProcessosUsuario(processo.getBlocosMemoria(),'ADICAO')
         #Remoção do processo com execução completa
         indice = self.getListaProcessos().index(processo)
         self.getListaProcessos().pop(indice)
@@ -522,8 +525,11 @@ class ClassGerenciadorFilas:
     def activateFirstUserProcess(self):
         for processo in self.USER_PROCESSES_RUNNING:
             if processo.getPrioridade() > 0 and processo.getTokenCPU() == False:
+                #print("Nao passou aqui nao: P" + str(processo.getPID()))
                 processo.activateTokenCPU()
-                return
+
+        exit(1)
+        return
 
     #Método para impressão de dados do processo
     def imprimeInicioDeExecucaoProcesso(self, processo):

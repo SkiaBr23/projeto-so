@@ -9,7 +9,7 @@
 
 # Declaração de constantes utilizadas na gerência de memória
 
-# Tamanho total da memoria 
+# Tamanho total da memoria
 TAMANHO_TOTAL_MEMORIA = 1024
 
 # Tamanho da partição voltada aos processos RT
@@ -27,7 +27,7 @@ class ClassGerenciadorMemoria:
 		self.int_memoria_processos_rt = TAMANHO_MEMORIA_PROCESSOS_RT
 		self.int_offset_memoria = 0
 
-	# Verifica a disponibilidade de memória para um processo. É levado 
+	# Verifica a disponibilidade de memória para um processo. É levado
 	# em conta o tipo de processo (RT ou usuário).
 	# Argumentos: processo que solicita a memória
 	def verificaDisponibilidadeMemoria(self, processo):
@@ -45,7 +45,7 @@ class ClassGerenciadorMemoria:
 	# Verifica se uma solicitação de memória de um processo é válida.
 	# Processos podem requisitar um espaço de memória menor ou igual ao
 	# máximo alocado para cada tipo.
-	# Argumentos: processo que solicita a memória			
+	# Argumentos: processo que solicita a memória
 	def verificaRequisicaoMemoria(self, processo):
 		if processo.getPrioridade() == 0:
 			if processo.getBlocosMemoria() > TAMANHO_MEMORIA_PROCESSOS_RT:
@@ -78,10 +78,10 @@ class ClassGerenciadorMemoria:
 	# Faz operações de adição e subtração na memória da partição de processos de usuário
 	# Argumentos: valor a ser somado/subtraído, operacao desejada (ADICAO/SUBTRACAO)
 	def atualizaMemoriaProcessosUsuario (self, valor, operacao):
-			if operacao == 'ADICAO':
-				self.int_memoria_processos_usuario += valor
-			elif operacao == 'SUBTRACAO':
-				self.int_memoria_processos_usuario -= valor
+		if operacao == 'ADICAO':
+			self.int_memoria_processos_usuario += valor
+		elif operacao == 'SUBTRACAO':
+			self.int_memoria_processos_usuario -= valor
 
 	# Retorna o valor de memória livre na partição de processos RT
 	def getMemoriaLivreProcessosRT (self):
