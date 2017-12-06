@@ -45,6 +45,7 @@ class ClassDespachante:
 
 				for line in arquivo:
 					line = line.rstrip("\n")	# Remocao do "\n" no final de linha
+					line = line.replace(" ","") # Remocao de espaços da linha
 					if line:
 						linhasArquivo.append(line)
 
@@ -69,6 +70,7 @@ class ClassDespachante:
 
 				for line in arquivo:
 					line = line.rstrip("\n")	# Remocao do "\n" no final de linha
+					line = line.replace(" ","") # Remocao de espaços da linha
 					if line:
 						linhasArquivo.append(line)
 
