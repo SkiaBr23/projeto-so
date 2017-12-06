@@ -12,8 +12,6 @@ from ClassProcesso import *
 
 class ClassGerenciadorArquivo:
 
-
-
 	# Descricao: Funcao criada para inserir os arquivos que ja estao no
 	# disco no momento de iniciacao do programa.
 	# Argumentos: vetor de posicoes do disco(que devem estar zerados) e o vetor de arquivos que ja
@@ -58,7 +56,7 @@ class ClassGerenciadorArquivo:
 		print("")
 		print("Sistema de arquivos =>\n")
 
-		contador = 0
+		contador = 1
 		idExiste = 0
 
 		for arquivo in vetor_arquivos_processos:
@@ -68,6 +66,7 @@ class ClassGerenciadorArquivo:
 			if(idExiste == 1):
 
 				if(arquivo.getBlocoInicial() == (-1)):
+
 					self.inserirArquivoDisco(arquivo, vetor_arquivos_disco, posicoesDisco, contador)
 
 				else:
@@ -115,6 +114,8 @@ class ClassGerenciadorArquivo:
 			for posicoesArquivo in range((posicoesArquivo - arquivo.getNumBlocos() + 1), (posicoesArquivo + 1)):
 				posicoesDisco[posicoesArquivo] = arquivo.getNomeArquivo();
 
+			vetor_arquivos_disco.append(arquivo)
+
 
 		return (vetor_arquivos_disco, posicoesDisco)
 
@@ -136,7 +137,6 @@ class ClassGerenciadorArquivo:
 
 		for processo in lista_processos:
 			if(processo.getPID() == processoArquivo):
-				#processo.imprimirValoresProcesso()
 				prioridadeProcesso = processo.getPrioridade()
 				break
 
